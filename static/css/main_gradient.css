@@ -1,0 +1,46 @@
+.background-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(120deg, #cfe2ff 0%, #045bdd 70%);
+    animation: bgMove 12s ease-in-out infinite alternate;
+}
+
+
+@keyframes bgMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+
+.content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    /* 允许换行 */
+}
+
+.sidebar {
+    flex: 0 0 250px;
+    /* 桌面端固定宽度 */
+}
+
+.main-content {
+    flex: 1;
+    /* 占据剩余空间 */
+}
+
+/* 手机端侧边栏堆叠显示 */
+@media (max-width: 768px) {
+    .sidebar {
+        flex: 0 0 100%;
+        /* 占满宽度 */
+    }
+}

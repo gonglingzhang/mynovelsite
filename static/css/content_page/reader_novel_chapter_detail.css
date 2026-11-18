@@ -1,0 +1,776 @@
+:root {
+    --read-container-width: 800px;
+    --read-container-max-width: 1480px;
+    --text-color: #171612;
+    /* 小说内容字体颜色 */
+    --read-container-text-color: #333333;
+    /* 添加默认值 */
+    --chapter-text-info-color: rgba(108, 117, 125, 1);
+    /* 小说信息字体颜色：   星星之火可以燎原 张三无敌大王永葆青春不朽  931字 2025年8月2日 00:36 隐藏右侧按钮 */
+    --scrollbar-width: 16px;
+    --content-font-family-style: "KaiTi", serif;
+    --content-line-height-style: 1em;
+    --content-font-size-style: 1em;
+    /* 各主题颜色变量 */
+    --default-bg-color: #eaeaea;
+    --ecru-bg-color: #e9e4d8;
+    --cyan-bg-color: #ccdade;
+    --green-bg-color: #c7ddc9;
+    --orange-bg-color: #e3d0a1;
+    --night-bg-color: #0a0a0a;
+    /* 各字体颜色变量 */
+    --whiter-font-color: white;
+    --gray-font-color: gray;
+    --green-font-color: green;
+    --blue-font-color: blue;
+    --orange-font-color: orange;
+    --default-font-color: black;
+    /* 日间主题变量 */
+    --bg-color: var(--default-bg-color);
+    /* 左右两侧背景色 */
+    --btn-change-bg: var(--default-bg-color);
+    /* 上一章  目录 下一章 背景色 */
+    --chapter-link-hover: var(--default-bg-color);
+    /* 打开目录后，鼠标放到对应章节时候的背景色 */
+    --read-container-bg: #f1f1f1;
+    /* 小说内容背景色 */
+    --btn-bg: var(--read-container-bg);
+    /* 右侧配置按钮背景色 目录,主题,设置... */
+    --btn-hover-bg: #e1ded5;
+    /* 上一章下一章 鼠标放上去时候的颜色 */
+    --border-color: var(--btn-hover-bg);
+    /* 上一章 下一章中间的 | 的颜色 和 打开目录后下划线颜色 */
+}
+
+.ecru-theme {
+    /* .ecru主题变量 */
+    --bg-color: var(--ecru-bg-color);
+    --btn-change-bg: var(--bg-color);
+    --chapter-link-hover: var(--bg-color);
+    --read-container-bg: #f3efe6;
+    --btn-bg: var(--read-container-bg);
+    --btn-hover-bg: #c7c3b6;
+    --border-color: var(--btn-hover-bg);
+}
+
+.cyan-theme {
+    /* 青色主题变量 */
+    --bg-color: var(--cyan-bg-color);
+    --btn-change-bg: var(--cyan-bg-color);
+    --chapter-link-hover: var(--cyan-bg-color);
+    --read-container-bg: #dcebef;
+    --btn-bg: var(--read-container-bg);
+    --btn-hover-bg: #9bb0c0;
+    --border-color: var(--btn-hover-bg);
+}
+
+.green-theme {
+    /* 绿色主题变量 */
+    --bg-color: var(--green-bg-color);
+    --btn-change-bg: var(--bg-color);
+    --chapter-link-hover: var(--bg-color);
+    --read-container-bg: #deecdf;
+    --btn-bg: var(--read-container-bg);
+    --btn-hover-bg: #9bb09d;
+    --border-color: var(--btn-hover-bg);
+}
+
+
+
+.orange-theme {
+    /* 橙色主题变量 */
+    --bg-color: var(--orange-bg-color);
+    --btn-change-bg: var(--bg-color);
+    --chapter-link-hover: var(--bg-color);
+    --read-container-bg: #ecdfbe;
+    --btn-bg: var(--read-container-bg);
+    --btn-hover-bg: #b8a071;
+    --border-color: var(--btn-hover-bg);
+}
+
+.night-theme {
+    /* 夜间主题变量 */
+    --text-color: #a0a0a0;
+    --bg-color: var(--night-bg-color);
+    --btn-change-bg: var(--night-bg-color);
+    --chapter-link-hover: var(--night-bg-color);
+    --read-container-bg: #111111;
+    --btn-bg: var(--read-container-bg);
+    --btn-hover-bg: #404040;
+    --border-color: var(--btn-hover-bg);
+}
+
+
+
+html {
+    overflow-y: auto;
+}
+
+html.has-scrollbar {
+    padding-right: var(--scrollbar-width);
+    /* 有滚动条时添加 padding */
+    overflow-y: scroll;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* 防止模态框内容因滚动条出现而晃动 */
+body.modal-open[style] {
+    padding-right: 0px !important;
+}
+
+.reader-page {
+    display: flex;
+    /* 设置为 flex 布局 */
+    justify-content: center;
+    align-items: center;
+}
+
+.left-container {
+    flex: 1;
+}
+
+.right-container {
+    flex: 1;
+    visibility: visible;
+    z-index: 1065;
+}
+
+.read-container {
+    flex: 2 0 var(--read-container-width) !important;
+    max-width: var(--read-container-max-width);
+    background-color: var(--read-container-bg);
+    position: relative;
+    /* 为模态框提供定位参考 */
+    display: flex;
+    flex-direction: column;
+    /* 垂直排列子元素 */
+    min-height: 100vh;
+    color: var(--read-container-text-color);
+}
+
+.breadcrumb {
+    /* 使用rem单位确保相对于根字体大小缩放 */
+    font-size: 0.9rem !important;
+}
+
+.breadcrumb a {
+    color: var(--read-container-text-color);
+    text-decoration: none;
+}
+
+.chapter-info {
+    font-size: xx-large;
+    margin: 0.8em;
+    font-family: var(--content-font-family-style);
+}
+
+.chapter-text-info {
+    color: var(--chapter-text-info-color) !important;
+    margin: 1em;
+    transition: background-color 0s ease-in-out !important;
+    /* 使用rem单位确保相对于根字体大小缩放 */
+    font-size: 0.9rem !important;
+}
+
+.chapter-text-info a {
+    transition: background-color 0s ease-in-out !important;
+}
+
+.read-container .chapter-content {
+    font-family: var(--content-font-family-style);
+    line-height: var(--content-line-height-style);
+    font-size: var(--content-font-size-style);
+    color: var(--read-container-text-color);
+    flex: 1;
+    max-width: 100%;
+    min-height: 65vh;
+    padding: 1em 2em;
+    overflow: auto !important;
+    /* 当内容超出容器时显示滚动条 */
+}
+
+/* 强制覆盖 chapter-content 内所有子元素的颜色，确保字体颜色设置生效 */
+.read-container .chapter-content *,
+.read-container .chapter-content p,
+.read-container .chapter-content span,
+.read-container .chapter-content div,
+.read-container .chapter-content h1,
+.read-container .chapter-content h2,
+.read-container .chapter-content h3,
+.read-container .chapter-content h4,
+.read-container .chapter-content h5,
+.read-container .chapter-content h6,
+.read-container .chapter-content li,
+.read-container .chapter-content blockquote,
+.read-container .chapter-content a {
+    color: inherit !important;
+}
+
+/* 限制图片最大宽度和高度 */
+.read-container .chapter-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 限制视频最大宽度和高度 */
+.read-container .chapter-content video {
+    max-width: 100%;
+    height: auto;
+}
+
+
+.btn-fixed-right {
+    width: 60px;
+    height: 60px;
+    background-color: var(--btn-bg);
+    border-radius: 15%;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border: none;
+    box-shadow: none;
+}
+
+.btn-fixed-right span {
+    color: gray;
+}
+
+.btn-fixed-right:hover {
+    color: red;
+}
+
+.btn-fixed-right:hover span {
+    color: red;
+}
+
+.scroll-to-show {
+    display: none;
+}
+
+.btn-change-chapter {
+    width: 33%;
+    background-color: var(--btn-change-bg);
+    /* 胶囊圆角 */
+    border-radius: 100vh;
+    color: var(--text-color) !important;
+    border-left: none !important;
+    transition: background-color 0s ease-in-out !important;
+}
+
+.btn-change-chapter:hover {
+    background-color: var(--btn-hover-bg);
+}
+
+.btn-change-chapter-leftborder {
+    position: relative;
+    /* 为伪元素提供定位参考 */
+}
+
+.btn-change-chapter-rightborder {
+    position: relative;
+}
+
+.btn-change-chapter-leftborder::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 20%;
+    height: 60%;
+    width: 2px;
+    background-color: var(--border-color);
+}
+
+.btn-change-chapter-rightborder::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 2px;
+    background-color: var(--border-color);
+}
+
+/* 目录模态框 */
+.dir-modal-dialog {
+    border-radius: 0px !important;
+    max-width: var(--read-container-max-width);
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+}
+
+/* 覆盖 Bootstrap 模态框默认的定位样式 */
+.modal {
+    background-color: transparent;
+    /* 设置背景为透明 */
+    overflow: hidden;
+    /* 防止内容溢出 */
+    z-index: 1064;
+    /* 保持模态框的 z-index 低于.right-container右侧容器 */
+
+}
+
+/* 强制设置遮罩层背景为透明 */
+.modal-backdrop {
+    background-color: transparent !important;
+}
+
+/* 模态框里面按钮的样式 */
+.btn-modal-showNovelContentModal {
+    background-color: var(--read-container-bg);
+    color: var(--text-color);
+    border-radius: 10%;
+    display: flex;
+    align-items: end;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border: none;
+    margin: 0.25em;
+    padding: 0.5em;
+}
+
+.btn-modal-showNovelContentModal:hover {
+    background-color: var(--chapter-link-hover);
+}
+
+.btn-modal-showNovelContentModal.active {
+    position: relative;
+    /* 为伪元素提供定位参考 */
+}
+
+.btn-modal-showNovelContentModal.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    /* 位于按钮底部 */
+    left: 50%;
+    /* 从按钮中心开始 */
+    transform: translateX(-50%);
+    width: 20%;
+    /* 宽度为按钮的 20% */
+    height: 2px;
+    /* 下划线高度 */
+    background-color: red;
+    border-radius: 100vh;
+}
+
+.btn-modal-reverse {
+    background-color: var(--read-container-bg);
+    color: var(--text-color);
+    border-radius: 10%;
+    display: flex;
+    align-items: end;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border: none;
+    margin-top: 1.5em;
+    padding: 0.25em;
+}
+
+.btn-modal-reverse:hover {
+    background-color: var(--chapter-link-hover);
+}
+
+.modal-content {
+    max-height: 100vh;
+    min-height: 100vh;
+    height: 100vh;
+    border-radius: 0px !important;
+    display: flex;
+    background-color: var(--read-container-bg);
+    color: var(--text-color);
+}
+
+.dir-modal-header {
+    background-color: var(--read-container-bg);
+    color: var(--text-color);
+    flex-shrink: 0;
+    /* 防止 header 被压缩 */
+}
+
+.modal-btn-close {
+    width: 2em;
+    height: 2em;
+    opacity: 0.75;
+    /* 设置透明度 */
+    border: none;
+    background-color: var(--read-container-bg);
+    color: var(--text-color);
+    /* 添加这行，让按钮颜色跟随主题文字颜色 */
+}
+
+.modal-btn-close:hover {
+    opacity: 0.95;
+    /* 鼠标悬停时的透明度 */
+}
+
+/* 覆盖按钮焦点时的蓝色边框 */
+.modal-btn-close:focus {
+    box-shadow: none;
+}
+
+.dir-modal-body {
+    padding: 0 15px;
+    margin: 0;
+    min-height: 0;
+    /* 确保 flex 布局下能正确收缩 */
+    overflow: auto;
+    /* 内容超出时显示滚动条 */
+}
+
+/* WebKit 和 Blink 内核浏览器 */
+.dir-modal-body::-webkit-scrollbar {
+    width: 10px;
+    /* 设置滚动条宽度 */
+}
+
+.dir-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dir-modal-body::-webkit-scrollbar-thumb {
+    background: var(--btn-hover-bg);
+    border-radius: 100vh;
+}
+
+.dir-modal-body::-webkit-scrollbar-button {
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    /* 隐藏滚动条上下箭头 */
+}
+
+.dir-chapter-list {
+    display: block;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+    /* 添加平滑过渡动画 */
+    max-height: 100vh;
+}
+
+.dir-chapter-list.collapsed {
+    max-height: 0;
+    /* 收起时高度为 0 */
+    opacity: 0;
+    /* 添加透明度过渡 */
+}
+
+.bookmark-chapter-list {
+    display: block;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+    /* 添加平滑过渡动画 */
+    max-height: 100vh;
+}
+
+.bookmark-chapter-list.collapsed {
+    max-height: 0;
+    /* 收起时高度为 0 */
+    opacity: 0;
+    /* 添加透明度过渡 */
+}
+
+.volume-header {
+    cursor: pointer;
+    /* 鼠标悬停显示手型 */
+    color: var(--text-color) !important;
+    /* 确保设置了颜色 */
+    background-color: var(--btn-change-bg);
+    border-radius: 10px;
+    height: 3em;
+    font-size: larger;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.volume-header svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--text-color);
+    margin-right: 5px;
+    transition: all 0.2s ease;
+}
+
+.a-chapter-info {
+    font-size: large;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    padding: 1em;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.a-chapter-info:hover {
+    background-color: var(--chapter-link-hover);
+    border-radius: 10px;
+}
+
+/* 设置模态框容器定位 */
+#settingsModal {
+    z-index: 1062;
+}
+
+/* 设置模态框对话框定位（右侧与 right-container 左对齐） */
+#settingsModal .modal-dialog {
+    z-index: 1063;
+    position: fixed;
+    margin: 0 !important;
+    padding: 0 !important;
+    bottom: 10vh;
+    max-width: 500px;
+    min-width: 500px;
+    max-height: 60vh;
+    min-height: 60vh;
+    background-color: var(--read-container-bg);
+    color: var(--text-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#settingsModal .modal-content {
+    max-width: 500px;
+    min-width: 500px;
+    max-height: 60vh;
+    min-height: 60vh;
+}
+
+.btn-theme {
+    position: relative;
+    width: 3em;
+    /* 宽度和高度需设置为相同值 */
+    height: 3em;
+    /* 确保按钮为正圆形 */
+    padding: 0;
+    /* 可选：移除内边距避免变形 */
+    border-radius: 50% !important;
+    border: none !important;
+    background-color: #fff;
+    transition: background-color 0s ease-in-out !important;
+}
+
+.btn-theme:hover {
+    border: 1px solid red !important;
+}
+
+.theme-checkmark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: red;
+    font-size: 1.5em;
+    display: none;
+}
+
+.btn-theme.active .theme-checkmark {
+    display: inline-block;
+}
+
+.btn-theme-default {
+    background-color: var(--default-bg-color) !important;
+}
+
+.btn-theme-ecru {
+    background-color: var(--ecru-bg-color);
+}
+
+.btn-theme-orange {
+    background-color: var(--orange-bg-color);
+}
+
+.btn-theme-green {
+    background-color: var(--green-bg-color);
+}
+
+.btn-theme-cyan {
+    background-color: var(--cyan-bg-color);
+}
+
+.btn-theme-night {
+    background-color: var(--night-bg-color);
+}
+
+/* 正文字体 */
+.btn-setting-modal-font .font-selector.active {
+    background-color: transparent;
+    color: red !important;
+    border-color: red !important;
+    transition: background-color 0s ease-in-out !important;
+}
+
+/* 字体颜色 */
+
+.btn-font-color {
+    position: relative;
+    width: 3em;
+    /* 宽度和高度需设置为相同值 */
+    height: 3em;
+    /* 确保按钮为正圆形 */
+    padding: 0;
+    /* 可选：移除内边距避免变形 */
+    border-radius: 50% !important;
+    border: none !important;
+    background-color: #fff;
+    transition: background-color 0s ease-in-out !important;
+}
+
+.btn-font-color:hover {
+    border: 1px solid red !important;
+}
+
+.btn-font-color .font-color-checkmark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: red;
+    font-size: 1.5em;
+    display: none;
+}
+
+.btn-font-color.active .font-color-checkmark {
+    display: inline-block;
+}
+
+
+.btn-font-color-whiter {
+    background-color: var(--whiter-font-color) !important;
+}
+
+.btn-font-color-gray {
+    background-color: var(--gray-font-color) !important;
+}
+
+.btn-font-color-green {
+    background-color: var(--green-font-color) !important;
+}
+
+.btn-font-color-blue {
+    background-color: var(--blue-font-color) !important;
+}
+
+.btn-font-color-orange {
+    background-color: var(--orange-font-color) !important;
+}
+
+.btn-font-color-default {
+    background-color: var(--default-font-color) !important;
+}
+
+/* 行间距 */
+.btn-setting-modal-line-height .font-selector.active {
+    background-color: transparent;
+    color: red !important;
+    border-color: red !important;
+    transition: background-color 0s ease-in-out !important;
+}
+
+/* 页面宽度 */
+.btn-setting-modal-content-width .font-selector.active {
+    background-color: transparent;
+    color: red !important;
+    border-color: red !important;
+    transition: background-color 0s ease-in-out !important;
+}
+
+
+
+/* 设置模态框容器定位 */
+#toolsModal {
+    z-index: 1062;
+}
+
+/* 设置模态框对话框定位（右侧与 right-container 左对齐） */
+#toolsModal .modal-dialog {
+    z-index: 1063;
+    position: fixed;
+    margin: 0 !important;
+    padding: 0 !important;
+    bottom: 10vh;
+    max-width: 500px;
+    min-width: 500px;
+    max-height: 60vh;
+    min-height: 60vh;
+    background-color: var(--read-container-bg);
+    color: var(--text-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#toolsModal .modal-content {
+    max-width: 500px;
+    min-width: 500px;
+    max-height: 60vh;
+    min-height: 60vh;
+}
+
+.tools-modal-body {
+    padding: 0 15px;
+    margin: 0;
+    min-height: 0;
+    /* 确保 flex 布局下能正确收缩 */
+    overflow: auto;
+    /* 内容超出时显示滚动条 */
+}
+
+
+/* 翻页模式 */
+.btn-tools-pageMode .btn-pageMode.active {
+    background-color: transparent;
+    color: red !important;
+    border-color: red !important;
+    transition: background-color 0s ease-in-out !important;
+}
+
+.auto-scroll-btn.active {
+    background-color: transparent;
+    color: red !important;
+    border-color: red !important;
+    transition: background-color 0s ease-in-out !important;
+}
+
+/* 阅读速度 */
+.diy-speed {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.diy-speed:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* 朗读模式 */
+.btn-tools-readMode .btn-readMode.active {
+    background-color: transparent;
+    color: red !important;
+    border-color: red !important;
+    transition: background-color 0s ease-in-out !important;
+}

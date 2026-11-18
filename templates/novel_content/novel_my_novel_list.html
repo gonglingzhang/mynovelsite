@@ -1,0 +1,77 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}我的作品{% endblock %}
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/index_page/index_on_hover.css' %}">
+<style>
+    /* 定义被点击按钮的样式 */
+    .active-btn {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+<script>
+    function filterNovels(status, button) {
+        // 构造 URL 并添加筛选条件
+        const url = `?status=${status}`;
+        // 页面跳转
+        window.location.href = url;
+    }
+</script>
+{% endblock %}
+{% block main %}
+{{ block.super }}
+<div class="container my-5" style="background-color: #ffffff;border-radius: 12px;box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+    <div class="row p-2 pb-0 pe-lg-0 pt-lg-4 align-items-center rounded-3  shadow-lg">
+        <div>
+            <p class="fs-3 fw-light fw-normal text-start ps-1 ms-1 pt-0 mt-0 pb-0 mb-0">我的作品&nbsp;
+                <!-- 点击按钮调用 filterNovels 函数传递筛选条件 -->
+                <button type="button" class="btn btn-outline-primary {% if current_status == 'all' %}active-btn{% endif %}" onclick="filterNovels('all', this)">全部</button>
+                <button type="button" class="btn btn-outline-primary {% if current_status == 'serializing' %}active-btn{% endif %}" onclick="filterNovels('serializing', this)">连载</button>
+                <button type="button" class="btn btn-outline-primary {% if current_status == 'completed' %}active-btn{% endif %}" onclick="filterNovels('completed', this)">完结</button>
+            </p>
+        </div>
+        {% if user_novels %}
+        <div class="row py-4 row-cols-2 row-cols-lg-5">
+            {% for novel in user_novels %}
+            <div class="feature col">
+                <div class=" d-flex flex-column justify-content-center align-items-center">
+                    {% if novel.novel_home_imgpath %}
+                    <a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}">
+                        <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{{ novel.novel_home_imgpath.url }}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                    </a>
+                    {% else %}
+                    <a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}">
+                        <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{% static 'image/暂无封面.jpg' %}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="mx-3 px-3  d-flex justify-content-center ">
+                    <a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}" class="link-primary text-body-emphasis text-decoration-none">{{ novel.novel_name }}</a>
+                </div>
+                <div class="d-flex justify-content-between align-items-center px-4 mb-5 mt-2">
+                    {% if novel.novel_status == 1 %}
+                    <p>
+                        <div class="text-success">完结</div>
+                        <div>
+                            <a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}" class="btn btn-sm btn-outline-primary">进入作品</a>
+                        </div>
+                    </p>
+                    {% else %}
+                    <p>
+                        <div class="text-info">连载</div>
+                        <div>
+                            <a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}" class="btn btn-sm btn-outline-primary">进入作品</a>
+                        </div>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h2><br>您暂时没有作品,请先创建。<br></h2>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

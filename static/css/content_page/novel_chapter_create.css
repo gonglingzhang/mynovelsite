@@ -1,0 +1,22 @@
+.custom-input {
+    border: none;
+    /* 移除边框 */
+    background-color: transparent;
+    /* 移除背景色 */
+    border-bottom: 1px solid #000;
+    /* 添加下划线 */
+    outline: none;
+    /* 移除聚焦时的外边框 */
+    width: 4em;
+    /* 使用 width 精确控制宽度 */
+    text-align: center;
+    /* 文本居中 */
+}
+
+.custom-input-title {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    width: 35em;
+    text-align: left;
+}

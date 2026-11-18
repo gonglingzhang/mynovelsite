@@ -1,0 +1,43 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}联系我们{% endblock %}
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/others_page/others_contact.css' %}">
+<link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block main %}
+{{ block.super }}
+<div class="contact-container mt-5">
+    <h1 class="contact-title">联系我们</h1>
+    <div class="contact-content">
+        <div class="contact-info">
+            <div class="info-item">
+                <i class="fa fa-map-marker-alt"></i>
+                <div class="info-text">
+                    <span class="info-label">地址：</span>
+                    <span>上海市</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fa fa-phone"></i>
+                <div class="info-text">
+                    <span class="info-label">电话：</span>
+                    <span>123 - 456 - 7890</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fa fa-envelope"></i>
+                <div class="info-text">
+                    <span class="info-label">邮箱：</span>
+                    <span>contact@example.com</span>
+                </div>
+            </div>
+        </div>
+        <div class="map-container">
+            <iframe src="https://uri.amap.com/marker?position=121.473701,31.230416&name=上海市&coordinate=gaode&callnative=0" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+            </iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}

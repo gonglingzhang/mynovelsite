@@ -1,0 +1,31 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}友情链接{% endblock %}
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/others_page/novel_friend_links.css' %}">
+<link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+<script src="{% static 'js/pagination.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+{{ block.super }}
+<div class="friend-links-container mt-5">
+    <h1 class="section-title">
+        <i class="fas fa-link"></i> 友情链接
+    </h1>
+    <div class="links-grid" id="links-grid">
+        {% for link in friend_links %}
+        <div class="link-card">
+            <a href="{{ link.link }}" target="_blank" rel="noopener noreferrer">
+                <div class="card-header">
+                    <!-- <img src="{% static 'images/friend_site_1.png' %}" alt="百度" class="site-icon"> -->
+                    <h3>{{ link.name }}</h3>
+                </div>
+                <p class="site-description">{{ link.description|truncatechars:48 }}</p>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="pagination" id="pagination"></div>
+</div>
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends 'index_base.html' %}
+
+
+{% block title %}首页{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css\index_page\index_carousel.css' %}">
+<link rel="stylesheet" href="{% static 'css\index_page\index_up_down_float.css' %}">
+<link rel="stylesheet" href="{% static 'css\index_page\index_on_hover.css' %}">
+{% endblock %}
+
+
+{% block main %}
+<div id="myCarousel" class="carousel slide carousel-fade pointer-event carousel_wapper mb-5" data-bs-ride="carousel" data-bs-interval="5000" style="margin-bottom: 3rem;">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class=""></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" class=></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" class="active"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="3" class=></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="4"> </button>
+    </div>
+    <div class="carousel-inner carouse_inner">
+        <div class="carousel-item carouse_inner_item">
+            <div class="container carouse_inner_item_container">
+                <div class="carousel-caption carouse_inner_item_container_caption">
+                    <a href="#">
+                        <img src="{% static 'image/全世界无产者联合起来.png'%}" class="carouse_inner_item_container_caption_img">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item  carouse_inner_item">
+            <div class="container carouse_inner_item_container">
+                <div class="carousel-caption carouse_inner_item_container_caption">
+                    <a href="#">
+                        <img src="{% static 'image/死亡不属于工人阶级.png'%}" class="carouse_inner_item_container_caption_img">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item active carouse_inner_item">
+            <div class="container carouse_inner_item_container">
+                <div class="carousel-caption carouse_inner_item_container_caption">
+                    <a href="#">
+                        <img src="{% static 'image/千万不要忘记阶级斗争.png'%}" class="carouse_inner_item_container_caption_img">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item  carouse_inner_item">
+            <div class="container carouse_inner_item_container">
+                <div class="carousel-caption carouse_inner_item_container_caption">
+                    <a href="#">
+                        <img src="{% static 'image/战无不胜的毛泽东思想万岁.png'%}" class="carouse_inner_item_container_caption_img">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item carouse_inner_item">
+            <div class="container carouse_inner_item_container">
+                <div class="carousel-caption text-end carouse_inner_item_container_caption">
+                    <a href="#">
+                        <img src="{% static 'image/敌人不投降就让他灭亡.png'%}" class="carouse_inner_item_container_caption_img">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">上一个</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+        <span class="carousel
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">下一个</span>
+    </button> -->
+</div>
+<div class="container marketing ">
+    <!-- Three columns of text below the carousel -->
+    <div class="row ps-5">
+        <div class="col-lg-4 px-5">
+            <div class="table-responsive ">
+                <table class="table table-borderless ">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="2" class="fs-3 fw-light fw-normal">最新小说推荐</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for novel in latest_novels %}
+                        <tr>
+                            <td>
+                                <span>{{ forloop.counter }}.</span>
+                                <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="text-body-emphasis text-decoration-none ps-2 link-primary " target="_blank">{{ novel.novel_name }}</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 px-5">
+            <div class="table-responsive ">
+                <table class="table table-borderless ">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="2" class="fs-3 fw-light fw-normal">热门小说推荐</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for novel in hot_novels %}
+                        <tr>
+                            <td>
+                                <span>{{ forloop.counter }}.</span>
+                                <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="text-body-emphasis text-decoration-none ps-2 link-primary " target="_blank">{{ novel.novel_name }}</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 px-5">
+            <div class="table-responsive ">
+                <table class="table table-borderless ">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="2" class="fs-3 fw-light fw-normal">月度热门小说</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for novel in hot_30days_novels %}
+                        <tr>
+                            <td>
+                                <span>{{ forloop.counter }}.</span>
+                                <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="text-body-emphasis text-decoration-none ps-2 link-primary " target="_blank">{{ novel.novel_name }}</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.col-lg-4 -->
+    </div><!-- /.row -->
+    <!-- START THE FEATURETTES -->
+    <div class="container my-5">
+        <div class="row p-2 pb-0 pe-lg-0 pt-lg-4 align-items-center rounded-3 border shadow-lg">
+            <p class="fs-3 fw-light fw-normal text-start ps-5 ms-4 pt-0 mt-0 pb-0 mb-0">男生精选</p>
+            <div class="row py-4 row-cols-2 row-cols-lg-5">
+                {% for novel in male_liked_novels %}
+                <div class="feature col">
+                    <div class=" d-flex flex-column justify-content-center align-items-center">
+                        {% if novel.novel_home_imgpath %}
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" target="_blank">
+                            <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{{ novel.novel_home_imgpath.url }}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                        </a>
+                        {% else %}
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" target="_blank">
+                            <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{% static 'image/暂无封面.jpg' %}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="mx-3 px-3  d-flex justify-content-center ">
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="link-primary text-body-emphasis text-decoration-none" title="{{ novel.novel_name }}" target="_blank">
+                            {{ novel.novel_name|truncatechars:11 }}</a>
+                    </div>
+                    <div class="mx-3 px-3">
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="link-dark text-decoration-none " title="{{ novel.novel_intro }}" target="_blank">
+                            <span class="show-font-info">
+                                {{ novel.novel_intro|truncatechars:54 }}</span>
+                        </a>
+                    </div>
+                    <div class="mx-3 px-3">
+                        <a href="#" class="link-dark text-decoration-none " target="_blank">
+                            <div class="d-flex justify-content-end">
+                                <span style="font-size: 0.75rem; color: #0f1010;" title="{{ novel.novel_author }}">{{ novel.novel_author|truncatechars:12 }}</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="mx-3 px-3 mb-5">
+                        <div class="d-flex justify-content-between">
+                            <span style="font-size: 0.75rem; color: #f62d09;">{{ novel.novel_click_like }}人点赞</span>
+                            <span style="font-size: 0.75rem; color: #f62d09;">{{ novel.novel_click_favorite }}人收藏</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row p-2 pb-0 pe-lg-0 pt-lg-4 align-items-center rounded-3 border shadow-lg">
+            <p class="fs-3 fw-light fw-normal text-start ps-5 ms-4 pt-0 mt-0 pb-0 mb-0">女生精选</p>
+            <div class="row py-4 row-cols-2 row-cols-lg-5">
+                {% for novel in female_liked_novels %}
+                <div class="feature col">
+                    <div class=" d-flex flex-column justify-content-center align-items-center">
+                        {% if novel.novel_home_imgpath %}
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" target="_blank">
+                            <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{{ novel.novel_home_imgpath.url }}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                        </a>
+                        {% else %}
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" target="_blank">
+                            <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{% static 'image/暂无封面.jpg' %}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="mx-3 px-3  d-flex justify-content-center ">
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="link-primary text-body-emphasis text-decoration-none" title="{{ novel.novel_name }}" target="_blank">
+                            {{ novel.novel_name|truncatechars:11 }}</a>
+                    </div>
+                    <div class="mx-3 px-3">
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="link-dark text-decoration-none " title="{{ novel.novel_intro }}" target="_blank">
+                            <span class="show-font-info">
+                                {{ novel.novel_intro|truncatechars:54 }}</span>
+                        </a>
+                    </div>
+                    <div class="mx-3 px-3">
+                        <a href="#" class="link-dark text-decoration-none " target="_blank">
+                            <div class="d-flex justify-content-end">
+                                <span style="font-size: 0.75rem; color: #0f1010;" title="{{ novel.novel_author }}">{{ novel.novel_author|truncatechars:12 }}</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="mx-3 px-3 mb-5">
+                        <div class="d-flex justify-content-between">
+                            <span style="font-size: 0.75rem; color: #f62d09;">{{ novel.novel_click_like }}人点赞</span>
+                            <span style="font-size: 0.75rem; color: #f62d09;">{{ novel.novel_click_favorite }}人收藏</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container my-5">
+        <div class="row p-2 pb-0 pe-lg-0 pt-lg-4 align-items-center rounded-3 border shadow-lg">
+            <p class="fs-3 fw-light fw-normal text-start ps-5 ms-4 pt-0 mt-0 pb-0 mb-0">网站推荐</p>
+            <div class="col-lg-7 p-1 p-lg-1 pt-lg-1 py-3 my-3">
+                <div class="row py-4 row-cols-2 row-cols-lg-3">
+                    {% for novel in website_suggest_novels %}
+                    <div class="feature col">
+                        <div class=" d-flex flex-column justify-content-center align-items-center">
+                            {% if novel.novel_home_imgpath %}
+                            <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" target="_blank">
+                                <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{{ novel.novel_home_imgpath.url }}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                            </a>
+                            {% else %}
+                            <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" target="_blank">
+                                <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{% static 'image/暂无封面.jpg' %}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="mx-3 px-3  d-flex justify-content-center">
+                            <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="link-primary text-body-emphasis text-decoration-none" title="{{ novel.novel_name }}" target="_blank">
+                                {{ novel.novel_name|truncatechars:11 }}</a>
+                        </div>
+                        <div class="mx-3 px-3">
+                            <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="link-dark text-decoration-none " title="{{ novel.novel_intro }}" target="_blank">
+                                <span class="show-font-info">
+                                    {{ novel.novel_intro|truncatechars:54 }}</span>
+                            </a>
+                        </div>
+                        <div class="mx-3 px-3">
+                            <a href="#" class="link-dark text-decoration-none " target="_blank">
+                                <div class="d-flex justify-content-end">
+                                    <span style="font-size: 0.75rem; color: #0f1010;" title="{{ novel.novel_author }}">{{ novel.novel_author|truncatechars:12 }}</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="mx-3 px-3 mb-5">
+                            <div class="d-flex justify-content-between">
+                                <span style="font-size: 0.75rem; color: #f62d09;">{{ novel.novel_click_like }}人点赞</span>
+                                <span style="font-size: 0.75rem; color: #f62d09;">{{ novel.novel_click_favorite }}人收藏</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="rounded-5  col-lg-4 offset-lg-1 p-0 overflow-visible shadow-lg up-down-float">
+                <img class="rounded-5 shadow" src="{% static 'image/mks.png' %}" alt="" height="620px">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

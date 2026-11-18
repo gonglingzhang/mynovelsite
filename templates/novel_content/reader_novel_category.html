@@ -1,0 +1,516 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}作品分类{% endblock %}
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/index_page/index_on_hover.css' %}">
+<style>
+    :root {
+        --fs-primary: #4f46e5;
+        --fs-primary-light: #eef2ff;
+        --fs-border: #e5e7eb;
+        --fs-text: #374151;
+        --fs-text-light: #6b7280;
+        --fs-text-lighter: #9ca3af;
+    }
+    /* ========== 筛选页整体容器 ========== */
+    .category-page {
+        background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+    }
+
+    /* ========== 顶部标题 & 搜索 ========== */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--fs-border);
+    }
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .page-title-icon {
+        width: 40px; height: 40px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 1.25rem;
+    }
+    .search-box {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .search-box input {
+        width: 240px;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--fs-border);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .search-box input:focus {
+        border-color: var(--fs-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    .search-box button {
+        padding: 0.5rem 1.25rem;
+        background: var(--fs-primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .search-box button:hover { background: #4338ca; }
+
+    /* ========== 筛选行 ========== */
+    .filter-row {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed #f3f4f6;
+        flex-wrap: wrap;
+    }
+    .filter-row:last-of-type { border-bottom: none; }
+    .filter-label {
+        flex-shrink: 0;
+        width: 64px;
+        padding-top: 0.375rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--fs-text-light);
+        text-align: right;
+    }
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        flex: 1;
+    }
+    .filter-chip {
+        padding: 0.375rem 0.875rem;
+        background: #f3f4f6;
+        border: 1px solid transparent;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: var(--fs-text);
+        cursor: pointer;
+        transition: all 0.25s;
+        user-select: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .filter-chip:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+    .filter-chip.active {
+        background: var(--fs-primary);
+        color: white;
+        border-color: var(--fs-primary);
+    }
+    .filter-chip .chip-count {
+        font-size: 0.7rem;
+        opacity: 0.75;
+    }
+
+    /* ========== 排序 & 结果数 ========== */
+    .result-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1.5rem 0 1rem;
+        padding: 0.75rem 1rem;
+        background: #f9fafb;
+        border-radius: 10px;
+    }
+    .result-count { color: var(--fs-text-light); font-size: 0.85rem; }
+    .sort-select {
+        padding: 0.375rem 0.75rem;
+        border: 1px solid var(--fs-border);
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--fs-text);
+        background: white;
+        cursor: pointer;
+        outline: none;
+    }
+    .sort-select:focus {
+        border-color: var(--fs-primary);
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+    }
+
+    /* ========== 小说网格 ========== */
+    .novel-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 1.5rem;
+    }
+    .novel-card {
+        position: relative;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+    .novel-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #e0e7ff;
+    }
+    .novel-cover {
+        position: relative;
+        aspect-ratio: 3/4;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    }
+    .novel-cover img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .novel-card:hover .novel-cover img { transform: scale(1.08); }
+    .status-badge {
+        position: absolute;
+        top: 10px; left: 10px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        backdrop-filter: blur(8px);
+    }
+    .badge-completed { background: rgba(16, 185, 129, 0.9); color: white; }
+    .badge-serializing { background: rgba(59, 130, 246, 0.9); color: white; }
+    .gender-badge {
+        position: absolute;
+        top: 10px; right: 10px;
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.75rem;
+        color: white;
+        font-weight: 600;
+    }
+    .gender-male { background: rgba(59, 130, 246, 0.9); }
+        .gender-female { background: rgba(236, 72, 153, 0.9); }
+        .gender-universal { background: rgba(16, 185, 129, 0.9); }
+    .cover-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%);
+        display: flex; align-items: flex-end; justify-content: center;
+        padding-bottom: 14px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .novel-card:hover .cover-overlay { opacity: 1; }
+    .cover-overlay-btn {
+        padding: 7px 18px;
+        background: white; color: #1f2937;
+        border: none; border-radius: 20px;
+        font-size: 0.82rem; font-weight: 600;
+        cursor: pointer; text-decoration: none;
+        transition: all 0.2s;
+    }
+    .cover-overlay-btn:hover { background: var(--fs-primary); color: white; }
+    .novel-info { padding: 12px 14px 14px; }
+    .novel-name {
+        font-size: 0.92rem; font-weight: 600; color: #1f2937;
+        margin: 0 0 4px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        transition: color 0.2s;
+    }
+    .novel-card:hover .novel-name { color: var(--fs-primary); }
+    .novel-meta {
+        display: flex; justify-content: space-between;
+        font-size: 0.75rem; color: var(--fs-text-lighter);
+    }
+    .novel-tags {
+        display: flex; flex-wrap: wrap; gap: 4px;
+        margin-top: 6px;
+    }
+    .novel-tags .mini-tag {
+        font-size: 0.68rem; padding: 1px 8px;
+        background: var(--fs-primary-light); color: var(--fs-primary);
+        border-radius: 10px;
+    }
+
+    /* ========== 空状态 ========== */
+    .empty-result { text-align: center; padding: 4rem 2rem; }
+    .empty-icon { font-size: 4rem; color: #d1d5db; margin-bottom: 1rem; }
+    .empty-text { font-size: 1.05rem; color: var(--fs-text-light); margin-bottom: 1.5rem; }
+    .reset-filter-btn {
+        padding: 0.5rem 1.25rem;
+        background: var(--fs-primary); color: white;
+        border: none; border-radius: 8px;
+        font-size: 0.9rem; cursor: pointer;
+        text-decoration: none; display: inline-block;
+    }
+    .reset-filter-btn:hover { background: #4338ca; }
+
+    /* ========== 分页 ========== */
+    .pagination-wrap { margin-top: 2rem; display: flex; justify-content: center; }
+    .pagination {
+        display: flex; gap: 0.35rem;
+    }
+    .pagination a, .pagination span {
+        min-width: 38px; height: 38px;
+        display: flex; align-items: center; justify-content: center;
+        padding: 0 0.6rem;
+        border: 1px solid var(--fs-border);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: var(--fs-text);
+        text-decoration: none;
+        background: white;
+        transition: all 0.2s;
+    }
+    .pagination a:hover {
+        border-color: var(--fs-primary);
+        color: var(--fs-primary);
+    }
+    .pagination .current {
+        background: var(--fs-primary);
+        color: white;
+        border-color: var(--fs-primary);
+    }
+    .pagination .disabled {
+        color: var(--fs-text-lighter);
+        pointer-events: none;
+        background: #f9fafb;
+    }
+
+    /* ========== 响应式 ========== */
+    @media (max-width: 768px) {
+        .category-page { padding: 1.25rem; }
+        .page-header { flex-direction: column; align-items: flex-start; }
+        .search-box input { width: 180px; }
+        .filter-label { width: 56px; font-size: 0.8rem; }
+        .novel-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+    }
+</style>
+<script>
+    // 通用：保留所有参数，更新某一个
+    function buildUrl(params) {
+        const url = new URL(window.location.href);
+        for (const [k, v] of Object.entries(params)) {
+            if (v === 'all' || v === '' || v === null) {
+                url.searchParams.delete(k);
+            } else {
+                url.searchParams.set(k, v);
+            }
+        }
+        // 重置分页
+        url.searchParams.delete('page');
+        return url.toString();
+    }
+    function goFilter(key, value) {
+        window.location.href = buildUrl({ [key]: value });
+    }
+    function goSearch() {
+        const keyword = document.getElementById('searchKeyword').value.trim();
+        window.location.href = buildUrl({ keyword: keyword });
+    }
+    function goSort() {
+        const order = document.getElementById('orderSelect').value;
+        window.location.href = buildUrl({ order: order });
+    }
+    function resetAll() {
+        window.location.href = window.location.pathname;
+    }
+</script>
+{% endblock %}
+
+{% block main %}
+{{ block.super }}
+<div class="container my-5">
+<div class="category-page">
+
+    <!-- 顶部标题 & 搜索 -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <span class="page-title-icon">🔍</span>
+            作品分类
+        </h1>
+        <div class="search-box">
+            <input type="text" id="searchKeyword" placeholder="搜索小说名或作者..." value="{{ keyword }}">
+            <button onclick="goSearch()">搜索</button>
+        </div>
+    </div>
+
+    <!-- 状态筛选 -->
+    <div class="filter-row">
+        <div class="filter-label">状态</div>
+        <div class="filter-options">
+            <a class="filter-chip {% if current_status == 'all' %}active{% endif %}"
+               href="#" onclick="goFilter('status','all');return false;">
+               全部<span class="chip-count">({{ total_count }})</span></a>
+            <a class="filter-chip {% if current_status == 'serializing' %}active{% endif %}"
+               href="#" onclick="goFilter('status','serializing');return false;">
+               连载中<span class="chip-count">({{ serializing_count }})</span></a>
+            <a class="filter-chip {% if current_status == 'completed' %}active{% endif %}"
+               href="#" onclick="goFilter('status','completed');return false;">
+               已完结<span class="chip-count">({{ completed_count }})</span></a>
+        </div>
+    </div>
+
+    <!-- 读者性别筛选 -->
+    <div class="filter-row">
+        <div class="filter-label">频道</div>
+        <div class="filter-options">
+            <a class="filter-chip {% if current_reader == 'all' %}active{% endif %}"
+               href="#" onclick="goFilter('reader','all');return false;">
+               全部<span class="chip-count">({{ total_count }})</span></a>
+            <a class="filter-chip {% if current_reader == 'male' %}active{% endif %}"
+               href="#" onclick="goFilter('reader','male');return false;">
+               ♂ 男频<span class="chip-count">({{ male_count }})</span></a>
+            <a class="filter-chip {% if current_reader == 'female' %}active{% endif %}"
+               href="#" onclick="goFilter('reader','female');return false;">
+               ♀ 女频<span class="chip-count">({{ female_count }})</span></a>
+            <a class="filter-chip {% if current_reader == 'universal' %}active{% endif %}"
+               href="#" onclick="goFilter('reader','universal');return false;">
+               🌐 全民向<span class="chip-count">({{ universal_count }})</span></a>
+        </div>
+    </div>
+
+    <!-- 分类筛选 -->
+    {% if categories %}
+    <div class="filter-row">
+        <div class="filter-label">分类</div>
+        <div class="filter-options">
+            <a class="filter-chip {% if current_category == 'all' %}active{% endif %}"
+               href="#" onclick="goFilter('category','all');return false;">全部</a>
+            {% for cat in categories %}
+            <a class="filter-chip {% if current_category == cat.id|stringformat:'s' %}active{% endif %}"
+               href="#" onclick="goFilter('category','{{ cat.id }}');return false;">{{ cat.category_name }}<span class="chip-count">({{ cat.novel_count }})</span></a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 标签筛选 -->
+    {% if labels %}
+    <div class="filter-row">
+        <div class="filter-label">标签</div>
+        <div class="filter-options">
+            <a class="filter-chip {% if current_label == 'all' %}active{% endif %}"
+               href="#" onclick="goFilter('label','all');return false;">全部</a>
+            {% for lb in labels %}
+            <a class="filter-chip {% if current_label == lb.id|stringformat:'s' %}active{% endif %}"
+               href="#" onclick="goFilter('label','{{ lb.id }}');return false;">#{{ lb.label_name }}<span class="chip-count">({{ lb.novel_count }})</span></a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 排序 & 结果数 -->
+    <div class="result-bar">
+        <div class="result-count">
+            共 <strong>{{ page_obj.paginator.count }}</strong> 本小说
+            {% if keyword %}（关键词：「{{ keyword }}」）{% endif %}
+        </div>
+        <div>
+            <select id="orderSelect" class="sort-select" onchange="goSort()">
+                <option value="update" {% if current_order == 'update' %}selected{% endif %}>最新更新</option>
+                <option value="click" {% if current_order == 'click' %}selected{% endif %}>最多点击</option>
+                <option value="favorite" {% if current_order == 'favorite' %}selected{% endif %}>最多收藏</option>
+                <option value="words" {% if current_order == 'words' %}selected{% endif %}>最多字数</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 小说网格 -->
+    {% if novels %}
+    <div class="novel-grid">
+        {% for novel in novels %}
+        <div class="novel-card" onclick="window.location.href='{% url 'novel_content:reverse_reader_novel_detail' novel.id %}'">
+            <div class="novel-cover">
+                {% if novel.novel_home_imgpath %}
+                <img src="{{ novel.novel_home_imgpath.url }}" alt="{{ novel.novel_name }}">
+                {% else %}
+                <img src="{% static 'image/暂无封面.jpg' %}" alt="{{ novel.novel_name }}">
+                {% endif %}
+                <span class="status-badge {% if novel.novel_status == 1 %}badge-completed{% else %}badge-serializing{% endif %}">
+                    {% if novel.novel_status == 1 %}完结{% else %}连载{% endif %}
+                </span>
+                <span class="gender-badge {% if novel.novel_reader_gender == 1 %}gender-male{% elif novel.novel_reader_gender == 0 %}gender-female{% else %}gender-universal{% endif %}">
+                    {% if novel.novel_reader_gender == 1 %}♂{% elif novel.novel_reader_gender == 0 %}♀{% else %}🌐{% endif %}
+                </span>
+                <div class="cover-overlay">
+                    <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="cover-overlay-btn">立即阅读</a>
+                </div>
+            </div>
+            <div class="novel-info">
+                <h3 class="novel-name">{{ novel.novel_name }}</h3>
+                <div class="novel-meta">
+                    <!-- <span>{{ novel.novel_author.user_nickname|default:novel.novel_author.username }}</span> -->
+                    <span>{{ novel.novel_author.username }}</span>
+                    <span>{{ novel.novel_word_count }}字</span>
+                </div>
+                {% if novel.novel_label.all %}
+                <div class="novel-tags">
+                    {% for lb in novel.novel_label.all|slice:':3' %}
+                    <span class="mini-tag">{{ lb.label_name }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 分页 -->
+    {% if is_paginated %}
+    <div class="pagination-wrap">
+        <nav class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?{{ base_query }}&page={{ page_obj.previous_page_number }}">上一页</a>
+            {% else %}
+            <span class="disabled">上一页</span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?{{ base_query }}&page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?{{ base_query }}&page={{ page_obj.next_page_number }}">下一页</a>
+            {% else %}
+            <span class="disabled">下一页</span>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- 空状态 -->
+    <div class="empty-result">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">没有找到符合条件的小说</div>
+        <a href="#" class="reset-filter-btn" onclick="resetAll();return false;">重置筛选条件</a>
+    </div>
+    {% endif %}
+
+</div>
+</div>
+{% endblock %}

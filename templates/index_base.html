@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}&nbsp;-&nbsp;星群免费小说</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'image/xingqun48.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index_page/star.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index_page/index_base.css' %}">
+    <script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/popper.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/star_header_footer.js' %}"></script>
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <header class="p-3 text-bg-dark header-style">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/"><img src="{% static 'image/start.jpg' %}" alt="Logo" style="height:40px;" class="px-1 mx-1"></a>
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="{% url 'index' %}" class="nav-link px-3 mx-3 text-body-secondary link-primary">&nbsp;首&nbsp;页&nbsp;</a></li>
+                    <li><a href="{% url 'novel_content:reverse_reader_novel_category' %}" class="nav-link px-3 mx-3 text-body-secondary link-primary">&nbsp;分&nbsp;类&nbsp;</a></li>
+                    <li><a href="{% url 'novel_content:reverse_reader_novel_favorite_list' %}" class="nav-link px-3 mx-3 text-body-secondary link-primary">&nbsp;书&nbsp;架&nbsp;</a></li>
+                </ul>
+                <form method="get" action="{% url 'novel_content:reverse_reader_novel_category' %}" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 d-flex nav-search-form" role="search">
+                    <input type="search" name="keyword" class="form-control form-control-light text-bg-light form-input-control" placeholder="请输入书名或作者名" aria-label="搜索" value="{{ keyword }}">
+                    <button type="submit" class="btn btn-outline-light ms-2">🔍</button>
+                </form>
+                <div class="text-end">
+                    {% if user.is_authenticated %}
+                    <!-- <div class="dropdown text-end">
+                        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">{{ user.username }}</a>
+                        <ul class="dropdown-menu text-small">
+                            <li class="px-3  text-center"><a class="dropdown-item" href="{% url 'novel_content:reverse_novel_create' %}">创建新书</a></li>
+                            <li class="px-3  text-center"><a class="dropdown-item" href="{% url 'novel_content:reverse_my_novel_list' %}">我的作品</a></li>
+                            <li class="px-3  text-center"><a class="dropdown-item" href="{% url 'novel_auth:reverse_novel_change_password' %}">修改密码</a></li>
+                            <li class="px-3  text-center"><a class="dropdown-item" href="{% url 'novel_auth:reverse_novel_logout' %}">退出登录</a></li>
+                        </ul>
+                    </div> -->
+                    <div class="dropdown text-end user-dropdown-wrap">
+                        <a href="#" class="user-dropdown-trigger d-flex align-items-center gap-2 link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- <span class="user-avatar-circle">{{ user.username|slice:':1' }}</span> -->
+                            <span>{{ user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu user-dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'novel_content:reverse_novel_create' %}">✍️ 创建新书</a></li>
+                            <li><a class="dropdown-item" href="{% url 'novel_content:reverse_my_novel_list' %}">📖 我的作品</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'novel_auth:reverse_novel_change_password' %}">🔐 修改密码</a></li>
+                            <li><a class="dropdown-item user-dropdown-logout" href="{% url 'novel_auth:reverse_novel_logout' %}">🚪 退出登录</a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                        <li><a href="{% url 'novel_auth:reverse_novel_login' %}" class="nav-link px-3 mx-3 text-body-secondary link-primary">&nbsp;登&nbsp;录&nbsp;{{ username }}</a></li>
+                        <li><a href="{% url 'novel_auth:reverse_novel_register' %}" class="nav-link px-3 mx-3 text-body-secondary link-primary">&nbsp;注&nbsp;册&nbsp;</a></li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block main %}{% endblock %}
+        {% block modal %}{% endblock %}
+    </main>
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 mt-3 border-top bg-light footer-style">
+        <p class="col-md-2 mb-0 text-body-secondary px-4 mx-4 footer-p">© 2025 星群</p>
+        <p class="col-md-4 mb-0 text-center text-body-secondary px-4 mx-4 footer-p" style="font-size: 0.875rem;">
+            <b>人类的群星闪耀时</b><br>本站所有转载作品，旨在让更多读者欣赏。如有侵权，请联系我们。
+        </p>
+        <ul class="nav col-md-3 justify-content-end px-4 mx-4">
+            <li class="nav-item"><a href="{% url 'novel_others:reverse_novel_about_us' %}" class="nav-link px-2 text-body-secondary">关于星群</a></li>
+            <li class="nav-item"><a href="{% url 'novel_others:reverse_novel_contact_us' %}" class="nav-link px-2 text-body-secondary">联系我们</a></li>
+            <li class="nav-item"><a href="{% url 'novel_others:reverse_novel_suggest_us' %}" class="nav-link px-2 text-body-secondary">提交建议</a></li>
+            <li class="nav-item"><a href="{% url 'novel_others:reverse_novel_friend_links' %}" class="nav-link px-2 text-body-secondary">友情链接</a></li>
+        </ul>
+    </footer>
+</body>
+
+</html>

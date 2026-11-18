@@ -1,0 +1,410 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}{{ novel.novel_name }}{% endblock %}
+{% block head %}
+{{ block.super }}
+<script>
+    // 对卷进行增删改
+    $(document).ready(function() {
+        // 保存当前小说 ID 到变量
+        const novelId = "{{ novel.id }}";
+        // 处理创建新卷表单提交 增
+        $('#volumeForm').submit(function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const url = form.attr('action');
+            const data = form.serialize();
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    if (response.success) {
+                        alert('新卷创建成功！');
+                        const newVolumeName = response.new_volume_name;
+                        const newVolumeCreateTime = response.new_volume_create_time;
+                        const newVolumeId = response.new_volume_id; // 获取新卷的 ID
+                        const newVolumeHtml = `
+                            <div class="mx-1 my-3 d-flex justify-content-between align-items-center">
+                                <span>
+                                <span>${newVolumeName}</span>
+                                <span>（创建时间：${newVolumeCreateTime}）</span>
+                                </span>
+                                ${newVolumeName !== '第一卷' ? `<span class="d-flex gap-2"><span><button type="button" class="btn btn-primary edit-volume-btn" data-novel-id="${novelId}" data-volume-id="${newVolumeId}">编辑</button></span> <span><button type="button" class="btn btn-danger delete-volume-btn" data-novel-id="${novelId}" data-volume-id="${newVolumeId}">删除</button></span></span>` : ''}
+                            </div>
+                        `;
+                        // 找到包含 "目前卷数：" 的元素并追加新卷 HTML
+                        $('#volumeForm .mb-3:contains("目前卷数：")').append(newVolumeHtml);
+                        $('#volumeName').val('');
+                    } else {
+                        const tempDiv = $('<div></div>').html(response.html);
+                        const newForm = tempDiv.find('#volumeForm').html();
+                        $('#volumeForm').html(newForm);
+                    }
+                },
+                error: function() {
+                    alert('请求出错，请稍后重试');
+                }
+            });
+        });
+
+        // 使用事件委托处理删除卷操作 删
+        $('#volumeForm').on('click', '.delete-volume-btn', function(e) {
+            e.preventDefault();
+            const $this = $(this);
+            // 弹出确认删除的弹窗
+            const isConfirmed = confirm('确定要删除这个卷吗？');
+            if (isConfirmed) {
+                const volumeId = $this.data('volume-id');
+                const url = "{% url 'novel_content:reverse_novel_del_volume' 0 0 %}".replace('0', novelId).replace('0', volumeId);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            alert(response.message);
+                            $this.closest('.mx-1.my-3').remove();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('请求出错，请稍后重试');
+                    }
+                });
+            }
+        });
+
+        // 使用事件委托处理编辑卷操作  改
+        $('#volumeForm').on('click', '.edit-volume-btn', function(e) {
+            e.preventDefault();
+            const $this = $(this);
+            const volumeId = $this.data('volume-id');
+            console.log('获取到的卷 ID:', volumeId); // 添加调试信息
+            const volumeName = $this.closest('.mx-1.my-3').find('span:first').find('span:first').text();
+            // 填充模态框表单
+            $('#editVolumeId').val(volumeId);
+            $('#editVolumeName').val(volumeName);
+            // 显示模态框
+            $('#editVolumeModal').modal('show');
+        });
+        // 处理编辑卷表单提交
+        $('#editVolumeForm').submit(function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const volumeId = $('#editVolumeId').val();
+            const url = "{% url 'novel_content:reverse_novel_edit_volume' 0 0 %}".replace('0', novelId).replace('0', volumeId);
+            const data = form.serialize();
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        // 更新页面上的卷名称
+                        const volumeElement = $(
+                            `.edit-volume-btn[data-volume-id="${volumeId}"]`).closest(
+                            '.mx-1.my-3').find('span:first').find('span:first');
+                        if (volumeElement.length > 0) {
+                            volumeElement.text(response.new_volume_name);
+                        }
+                        // 关闭模态框
+                        $('#editVolumeModal').modal('hide');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('请求出错，请稍后重试');
+                }
+            });
+        });
+    });
+</script>
+<script>
+    // 完结 连载 删除小说
+    function novel_finish_confirmComplete() {
+        // 弹出确认窗口
+        const isConfirmed = confirm('确认要完结该小说吗？');
+        if (isConfirmed) {
+            const novelId = "{{ novel.id }}";
+            const url = "{% url 'novel_content:reverse_novel_finish' novel.id %}";
+            const csrfToken = '{{ csrf_token }}';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                success: function(response) {
+                    // 使用 alert 弹窗显示 JSON 数据中的消息
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        // 可以在这里添加删除成功后的其他操作，比如跳转到列表页
+                        window.location.href = "{% url 'novel_content:reverse_my_novel_detail' novel.id %}";
+                    }
+                },
+                error: function() {
+                    alert('请求出错，请稍后重试');
+                }
+            });
+        }
+    }
+
+    function novel_load_confirmComplete() {
+        // 弹出确认窗口
+        const isConfirmed = confirm('确认要继续连载该小说吗？');
+        if (isConfirmed) {
+            const novelId = "{{ novel.id }}";
+            const url = "{% url 'novel_content:reverse_novel_loading' novel.id %}";
+            const csrfToken = '{{ csrf_token }}';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                success: function(response) {
+                    // 使用 alert 弹窗显示 JSON 数据中的消息
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        // 可以在这里添加删除成功后的其他操作，比如跳转到列表页
+                        window.location.href = "{% url 'novel_content:reverse_my_novel_detail' novel.id %}";
+                    }
+                },
+                error: function() {
+                    alert('请求出错，请稍后重试');
+                }
+            });
+        }
+    }
+
+    function novel_del_confirmComplete() {
+        // 弹出确认窗口
+        const isConfirmed = confirm('确认要删除该小说吗？');
+        if (isConfirmed) {
+            const novelId = "{{ novel.id }}";
+            const url = "{% url 'novel_content:reverse_novel_del' novel.id %}";
+            const csrfToken = '{{ csrf_token }}';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                success: function(response) {
+                    // 使用 alert 弹窗显示 JSON 数据中的消息
+                    alert(response.message);
+                    if (response.status === 'success') {
+                        // 可以在这里添加删除成功后的其他操作，比如跳转到列表页
+                        window.location.href = "{% url 'novel_content:reverse_my_novel_list' %}";
+                    }
+                },
+                error: function() {
+                    alert('请求出错，请稍后重试');
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}
+
+{% block main %}
+{{ block.super }}
+<div class="container my-5" style="background-color: #ffffff;border-radius: 12px;box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+    <div class="row p-2 pb-0 pe-lg-0 pt-lg-4 align-items-center rounded-3  shadow-lg">
+        <div class="px-2 my-5 d-flex justify-content-center align-items-center">
+            <div class="col-md-3 px-3 d-flex justify-content-center align-items-center ">
+                {% if novel.novel_home_imgpath %}
+                <a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}">
+                    <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{{ novel.novel_home_imgpath.url }}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                </a>
+                {% else %}
+                <a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}">
+                    <img class="card my-2 rounded-3 shadow-sm zoom-on-hover" src="{% static 'image/暂无封面.jpg' %}" title="{{ novel.novel_name }}" alt="{{ novel.novel_name }}" style="width: 140px; height: 180px;">
+                </a>
+                {% endif %}
+            </div>
+            <div class="col-md-6 px-3">
+                <div class="d-flex justify-content-center align-items-center my-2 fw-bold fs-4">{{ novel.novel_name }}
+                </div>
+                <div class="d-flex justify-content-center align-items-center my-2 show-font-info">
+                    {{ novel.novel_author }}</div>
+                <div class="d-flex justify-content-center align-items-center my-2 show-font-info flex-wrap">
+                    {% for category in novel.novel_category.all %}
+                    <span class="info-label-grey">{{ category.category_name }}</span>
+                    {% empty %}未分类
+                    {% endfor %}
+                </div>
+                <div class="d-flex justify-content-center align-items-center my-2 show-font-info flex-wrap">
+                    {% for label in novel.novel_label.all %}
+                    <span class="info-label-grey">{{ label.label_name }}</span>
+                    {% empty %}无标签
+                    {% endfor %}
+                </div>
+                <div class="d-flex justify-content-center align-items-center my-2 show-font-info">
+                    {% if novel.novel_status %}
+                    <div class="d-flex justify-content-center align-items-center my-2">
+                        <span class="info-label-orange mx-3">完结</span>
+                    </div>
+                    {% else %}
+                    <span class="info-label-green mx-3">连载</span>
+                    {% endif %}
+                    <span class="mx-2">最近更新：</span>
+                    {% if latest_chapter %}
+                    <span class="mx-1">{{ latest_chapter.chapter_name }}</span>
+                    <span class="mx-1">{{ latest_chapter.chapter_intro }}</span>
+                    <span class="mx-2">{{ latest_chapter.chapter_update_time }}</span>
+                    {% else %}
+                    <span class="mx-1">暂无更新</span>
+                    {% endif %}
+                </div>
+                {% if novel.novel_status %}
+                <div class="d-flex justify-content-center align-items-center my-2">
+                    <div class="d-flex justify-content-center align-items-center my-2">
+                        <button type="button" class="btn btn-info m-2" onclick="novel_load_confirmComplete()">继续更新</button>
+                        <button type="submit" class="btn btn-danger m-2" onclick="novel_del_confirmComplete()">删除小说</button>
+                    </div>
+                </div>
+                {% else %}
+                <div class="d-flex justify-content-center align-items-center my-2">
+                    <a href="{% url 'novel_content:reverse_novel_update' novel_id=novel.id %}"><button type="submit" class="btn btn-success m-2">修改信息</button></a>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#createNewVolumeModal"><button type="submit" class="btn btn-success m-2">创建新卷</button></a>
+                    <a href="{% url 'novel_content:reverse_novel_chapter_create' novel.id %}"><button type="submit" class="btn btn-success m-2">创建新章节</button></a>
+                </div>
+                <div class="d-flex justify-content-center align-items-center my-2">
+                    <button type="button" class="btn btn-warning m-2" onclick="novel_finish_confirmComplete()">完结撒花</button>
+                    <button type="submit" class="btn btn-danger m-2" onclick="novel_del_confirmComplete()">删除小说</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%; ">
+            <div style="width: 80%; margin: 0 auto;" class="fs-5 px-3 my-2 fw-bold border-bottom">作品简介
+            </div>
+        </div>
+        <div class="my-4" style="width: 76%; display: block; font-size: 0.75rem; color: #6c757d; display: block; margin: auto;">
+            {{ novel.novel_intro|safe|linebreaksbr|truncatechars:200 }}</div>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div style="width: 80%; margin: 0 auto;" class="fs-5 px-3 my-2 fw-bold border-bottom">
+                目录&nbsp;·&nbsp;共{{novel.novel_chapter.count}}章
+            </div>
+        </div>
+
+        {% for novel_volume in novel.novel_volume.all %}
+        <div class="my-3">
+            {% if novel_volume.volume_chapter.all.count > 0 %}
+            <div class="row d-flex justify-content-center align-items-center my-2 fw-bold">
+                {{ novel_volume.volume_name }}&nbsp;·&nbsp;共{{ novel_volume.volume_chapter.all.count }}章
+            </div>
+            <div class="row d-flex my-2">
+                {% for novel_chapter in novel_volume.volume_chapter.all|dictsort:"chapter_no" %}
+                <div class="col-lg-4">
+                    <div class="my-3 d-flex justify-content-center align-items-center">
+                        <a href="{% url 'novel_content:reverse_novel_chapter_edit' novel.id novel_chapter.id %}" class="nav-link text-body-secondary link-warning">
+                            {{ novel_chapter.chapter_name }}
+                            {{ novel_chapter.chapter_intro }}
+                        </a></div>
+                </div>
+                {% endfor %}
+            </div>
+            <br>
+            {% endif %}
+        </div>
+        {% endfor %}​
+
+
+    </div>
+
+    {% block modal %}
+    <!-- 添加模态框 -->
+    <!-- 添加新增卷模态框 -->
+    <div class="modal fade" id="createNewVolumeModal" tabindex="-1" aria-labelledby="createNewVolumeModalLabel" aria-hidden="true">
+        <div class="modal-dialog " style="max-width: 600px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="createNewVolumeModalLabel">创建新卷</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 这里添加创建新卷的表单 -->
+                    <form action="{% url 'novel_content:reverse_novel_volume_create' novel.id %}" method="post" id="volumeForm">
+                        {% csrf_token %}
+                        <!-- 渲染表单的非字段错误 -->
+                        {% if form.non_field_errors %}
+                        <script>
+                            '{% for error in form.non_field_errors %}'
+                            alert('{{ error|escapejs }}');
+                            '{% endfor %}'
+                        </script>
+                        {% endif %}
+                        <!-- 渲染 volume_name 字段的错误 -->
+                        {% if form.volume_name.errors %}
+                        <script>
+                            '{% for error in form.volume_name.errors %}'
+                            alert('{{ error|escapejs }}');
+                            '{% endfor %}'
+                        </script>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label for="volumeName" class="form-label">新增卷名称</label>
+                            <input type="text" class="form-control" id="volumeName" placeholder="请输入卷名称(第一卷、第二卷等)" name="volume_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <span class="fs-6">目前卷数：</span>
+                            {% for volume in novel.novel_volume.all %}
+                            <div class="mx-1 my-3 d-flex justify-content-between align-items-center">
+                                <span>
+                                    <span>{{ volume.volume_name }}</span>
+                                    <span>（创建时间：{{ volume.volume_create_time }}）</span>
+                                </span>
+                                {% if volume.volume_name != '第一卷' %}
+                                <span class="d-flex gap-2">
+                                    <span><button type="button" class="btn btn-primary edit-volume-btn" data-novel-id="{{ novel.id }}" data-volume-id="{{ volume.id }}">编辑</button></span>
+                                    <span><button type="button" class="btn btn-danger delete-volume-btn" data-novel-id="{{ novel.id }}" data-volume-id="{{ volume.id }}">删除</button></span>
+                                </span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 添加编辑卷模态框 -->
+    <div class="modal fade" id="editVolumeModal" tabindex="-1" aria-labelledby="editVolumeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 600px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="editVolumeModalLabel">编辑卷信息</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="editVolumeForm">
+                        {% csrf_token %}
+                        <input type="hidden" id="editVolumeId" name="volume_id">
+                        <div class="mb-3">
+                            <label for="editVolumeName" class="form-label">卷名称</label>
+                            <input type="text" class="form-control" id="editVolumeName" name="volume_name" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="submit" form="editVolumeForm" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</div>
+{% endblock %}

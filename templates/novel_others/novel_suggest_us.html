@@ -1,0 +1,49 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}用户建议{% endblock %}
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/others_page/others_suggest.css' %}">
+{% endblock %}
+
+{% block main %}
+{{ block.super }}
+<div class="suggest-container mt-5">
+    <h1>提交您的建议</h1>
+    <!-- 显示消息 -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if form.errors %}
+    <div class="form-errors mb-3">
+        <ul>
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <form action="{% url 'novel_others:reverse_novel_suggest_us' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="suggest_title">建议主题</label>
+            <input type="text" id="suggest_title" name="suggest_title" placeholder="请输入建议主题" required>
+        </div>
+        <div class="form-group">
+            <label for="suggest_content">建议内容</label>
+            <textarea id="suggest_content" name="suggest_content" placeholder="请输入您的建议内容" required></textarea>
+        </div>
+        <button type="submit">提交建议</button>
+    </form>
+    <!-- 添加查看历史建议按钮 -->
+    <a href="{% url 'novel_others:reverse_novel_my_suggestions' %}" class="float-end">查看历史建议</a>
+</div>
+{% endblock %}

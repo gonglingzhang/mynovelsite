@@ -1,0 +1,63 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}我的历史建议{% endblock %}
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/others_page/others_suggest.css' %}">
+{% endblock %}
+
+{% block main %}
+{{ block.super }}
+<div class="suggest-container mt-5">
+    <h1>我的历史建议</h1>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if suggestions %}
+    <div class="suggest-list">
+        {% for suggestion in suggestions %}
+        <div class="suggest-item mb-4">
+            <!-- 使用 Flexbox 布局，让内容两端对齐 -->
+            <div class="suggest-header d-flex justify-content-between align-items-center">
+                <span>
+                    <h4>{{ suggestion.suggest_title }}</h4>
+                </span>
+                <small class="text-muted">{{ suggestion.create_time }}</small>
+            </div>
+            <div class="suggest-content">
+                <p>{{ suggestion.suggest_content }}</p>
+            </div>
+            <div class="suggest-status" style="font-size: smaller;">
+                {% if suggestion.is_processed %}
+                {% if suggestion.is_accepted %}
+                <p class="text-success">已采纳。处理时间:{{ suggestion.process_time }}</p>
+                {% else %}
+                <p class="text-danger">未采纳。处理时间:{{ suggestion.process_time }}。未采纳原因:{{ suggestion.noaccept_reason }}</p>
+                {% endif %}
+                {% else %}
+                <p class="text-info">未处理</p>
+                {% endif %}
+            </div>
+            <div>
+                <form action="{% url 'novel_others:reverse_delete_suggest' suggestion.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">删除建议</button>
+                </form>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        您还没有提交过任何建议。
+    </div>
+    {% endif %}
+    <div class="text-end">
+        <a href="{% url 'novel_others:reverse_novel_suggest_us' %}" class="btn btn-primary mt-3 ">返回提交建议</a>
+    </div>
+</div>
+{% endblock %}

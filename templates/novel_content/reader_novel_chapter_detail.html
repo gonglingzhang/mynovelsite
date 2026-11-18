@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{novel_chapter.chapter_name}}&nbsp;{{novel_chapter.chapter_intro}}&nbsp;《{{novel.novel_name}}》&nbsp;-&nbsp;星群免费小说</title>
+    <link rel="icon" href="{% static 'image/xingqun48.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content_page/reader_novel_chapter_detail.css' %}">
+    <script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/popper.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/reader_novel_chapter_detail.js' %}"></script>
+    <script>
+        // 定义全局变量 获取上一章和下一章的链接
+        window.previousChapterUrl = `{% if previous_chapter %}{% url 'novel_content:reverse_reader_novel_chapter_detail' previous_chapter.novel_basicinfo.id previous_chapter.novel_volume.id previous_chapter.id %}{% else %}null{% endif %}`;
+        // window.nextChapterUrl = `{% if next_chapter %}{% url 'novel_content:reverse_reader_novel_chapter_detail' next_chapter.novel_basicinfo.id next_chapter.novel_volume.id next_chapter.id %}{% else %}null{% endif %}`;
+        window.nextChapterUrl = "{{ next_chapter_url|default:''|escapejs }}";
+    </script>
+</head>
+
+<body>
+    <div class="reader-page">
+        <div class="left-container"></div>
+        <div class="read-container ">
+            <div class="mx-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}" target="_blank">首页</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'novel_content:reverse_reader_novel_detail' novel_chapter.novel_basicinfo.id %}" target="_blank">{{novel_chapter.novel_basicinfo.novel_name}}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'novel_content:reverse_reader_novel_chapter_detail' novel_chapter.novel_basicinfo.id novel_chapter.novel_volume.id novel_chapter.id %}">{{novel_chapter.chapter_name}}&nbsp;{{novel_chapter.chapter_intro}}</a></li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="chapter-info d-flex justify-content-between">{{novel_chapter.chapter_name}}&nbsp;{{novel_chapter.chapter_intro}}
+                {% if is_book_mark %}
+                <a href="{% url 'novel_content:reverse_novel_book_mark' novel.id novel_chapter.id %}" style="color: #a0a0a0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-bookmark-fill" viewBox="0 0 16 16">
+                        <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2" />
+                    </svg>
+                </a>
+                {% else %}
+                <a href="{% url 'novel_content:reverse_novel_book_mark' novel.id novel_chapter.id %}" style="color: #a0a0a0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-bookmark" viewBox="0 0 16 16">
+                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            <div class="chapter-text-info d-flex">
+                <span class="d-flex align-items-center"><a class="nav-link ms-3" href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-book" viewBox="0 0 16 16">
+                            <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" /></svg>&nbsp;{{novel.novel_name}}</a>
+                </span>
+                <span class="mx-3 d-flex align-items-center"><a class="nav-link ms-3" href="#" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" /></svg>&nbsp;{{novel.novel_author}}</a>
+                </span>
+                <span class="mx-3  d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                        <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" /></svg>&nbsp;{{novel_chapter.chapter_word_count}}字
+                </span>
+                <span class="mx-3 d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" /></svg>&nbsp;{{novel_chapter.chapter_update_time}}
+                </span>
+                <span class="d-flex align-items-center"><a class="toggleRightBtn nav-link ms-3" href="#"><svg class="toggleIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-off" viewBox="0 0 16 16">
+                            <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8" /></svg><span class="toggleText">&nbsp;隐藏右侧按钮</span></a>
+                </span>
+            </div>
+            <div class="chapter-container" data-chapter-id="{{ novel_chapter.id }}">
+                <!-- data-chapter-url="{% url 'novel_content:reverse_reader_novel_chapter_detail' novel_chapter.novel_basicinfo.id novel_chapter.novel_volume.id novel_chapter.id %}" -->
+                <div class="chapter-content">
+                    {{novel_chapter_content.content|safe}}
+                </div>
+            </div>
+            <div class="change-chapter mx-3 my-5 d-flex" id="changeChapterContainer">
+                <div class="btn-group btn-group-lg" style="width: 100%;" role="group" aria-label="Large button group">
+                    {% if previous_chapter %}
+                    <button type="button" class="btn-change-chapter btn py-3 btn-change-chapter-rightborder" onclick="window.location.href=`{% url 'novel_content:reverse_reader_novel_chapter_detail' novel.id previous_chapter.novel_volume.id previous_chapter.id %}`">
+                        上一章
+                    </button>
+                    {% endif %}
+                    <button type="button" class="btn-change-chapter btn py-3" data-bs-toggle="modal" data-bs-target="#showNovelContentModal">目录</button>
+                    {% if next_chapter %}
+                    <button type="button" class="btn-change-chapter btn py-3 btn-change-chapter-leftborder" onclick="window.location.href=`{% url 'novel_content:reverse_reader_novel_chapter_detail' novel.id next_chapter.novel_volume.id next_chapter.id %}`">
+                        下一章
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div id="rightContainer" class="right-container">
+            <div class="m-3" style="position: fixed; top: 50%; ">
+                <div class="my-3">
+                    <button type="button" class="btn-fixed-right" data-bs-toggle="modal" data-bs-target="#showNovelContentModal">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-justify" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5" /></svg></span>
+                        <br>
+                        <span>目录</span>
+                    </button>
+                </div>
+                <div class="my-3">
+                    <button id="nightThemeToggle" type="button" class="btn-fixed-right">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon" viewBox="0 0 16 16">
+                                <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286" /></svg></span>
+                        <br>
+                        <span>夜间</span>
+                    </button>
+                    <button id="dayThemeToggle" type="button" class="btn-fixed-right" style="display: none;">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sun" viewBox="0 0 16 16">
+                                <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708" /></svg></span>
+                        <br>
+                        <span>日间</span>
+                    </button>
+                </div>
+                <div class="my-3">
+                    <button type="button" class="btn-fixed-right" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z" /></svg></span>
+                        <br>
+                        <span>设置</span>
+                    </button>
+                </div>
+                <div class="my-3">
+                    <button type="button" class="btn-fixed-right" data-bs-toggle="modal" data-bs-target="#toolsModal">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tools" viewBox="0 0 16 16">
+                                <path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3q0-.405-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814zm9.646 10.646a.5.5 0 0 1 .708 0l2.914 2.915a.5.5 0 0 1-.707.707l-2.915-2.914a.5.5 0 0 1 0-.708M3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026z" />
+                            </svg></span>
+                        <br>
+                        <span>工具</span>
+                    </button>
+                </div>
+                <div class="my-3 scroll-to-show">
+                    <button id="backToTop" type="button" class="btn-fixed-right">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5" /></svg></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：目录 -->
+    <div class="modal fade" id="showNovelContentModal" tabindex="-1" aria-labelledby="showNovelContentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable dir-modal-dialog">
+            <div class="modal-content">
+                <div class="dir-modal-header">
+                    <div class="pt-3 mx-3 d-flex justify-content-end">
+                        <button type="button" class="modal-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content px-3 pb-3">
+                        <div class="d-flex align-items-end">
+                            <button class="btn-modal-showNovelContentModal active tab-btn" data-target="directoryContent" style="font-size: x-large;">目录</button>
+                        </div>
+                        <div class="mx-3 d-flex align-items-center">
+                            {% if novel.novel_status %}
+                            <span class="chapter-text-info">已完结&nbsp;·&nbsp;共{{novel.novel_chapter.count}}章</span>
+                            {% else %}
+                            <span class="chapter-text-info">连载中&nbsp;·&nbsp;共{{novel.novel_chapter.count}}章</span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <button class="btn-modal-showNovelContentModal tab-btn" data-target="bookmarkContent" style="font-size: x-large;">书签</button>
+                        </div>
+                        <div class="d-flex justify-content-end pe-3" style="margin-left: auto;">
+                            <button class="btn-modal-reverse">
+                                <span class="d-flex align-items-center" id="reverseToggle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sort-down" viewBox="0 0 16 16">
+                                        <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z" />
+                                    </svg>
+                                    <span>倒序</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="dir-modal-body px-3" id="directoryContent">
+                    {% for volume in novel.novel_volume.all %}
+                    <div class="volume-header px-4 my-3">
+                        {{volume.volume_name}}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                        </svg>
+                    </div>
+                    <div class="dir-chapter-list px-2">
+                        <div class="row d-flex align-items-center justify-content-between">
+                            {% for chapter in volume.volume_chapter.all %}
+                            <div class="col-lg-5">
+                                <a class="a-chapter-info" href="{% url 'novel_content:reverse_reader_novel_chapter_detail' novel.id chapter.novel_volume.id chapter.id %}" title="{{chapter.chapter_name}} {{chapter.chapter_intro}} 字数：{{chapter.chapter_word_count}} 更新时间：{{chapter.chapter_update_time}}" id="{% if chapter.id == novel_chapter.id %}current-chapter{% endif %}">
+                                    {{chapter.chapter_name}} {{chapter.chapter_intro}}
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- 新增书签内容区域 -->
+                <div class="dir-modal-body px-3" id="bookmarkContent" style="display: none;">
+                    {% if user_bookmarks %}
+                    {% for volume in novel.novel_volume.all %}
+                    <div class="volume-header px-4 my-3">
+                        {{volume.volume_name}}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+                            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
+                        </svg>
+                    </div>
+                    <div class="bookmark-chapter-list px-2">
+                        <div class="row d-flex align-items-center justify-content-between">
+                            {% for chapter in volume.volume_chapter.all %}
+                            {% if chapter.id in bookmark_ids %}
+                            <!-- 修改此行 -->
+                            <div class="col-lg-5">
+                                <a class="a-chapter-info" href="{% url 'novel_content:reverse_reader_novel_chapter_detail' novel.id chapter.novel_volume.id chapter.id %}" title="{{chapter.chapter_name}} {{chapter.chapter_intro}} 字数：{{chapter.chapter_word_count}} 更新时间：{{chapter.chapter_update_time}}" id="{% if chapter.id == novel_chapter.id %}current-chapter{% endif %}">
+                                    {{chapter.chapter_name}} {{chapter.chapter_intro}}
+                                </a>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <p>暂无书签记录</p>
+                        <button class="btn btn-sm btn-primary mt-2" onclick="$('#showNovelContentModal').modal('hide');">去添加书签</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 模态框：设置 -->
+    <div class="modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable setting-modal-dialog">
+            <div class="modal-content">
+                <div class="setting-modal-header">
+                    <div class="pt-3 mx-3 d-flex justify-content-end">
+                        <button type="button" class="modal-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="px-3 pb-3">
+                        <h5 class="modal-title" id="settingsModalLabel" style="font-size: x-large;">阅读设置</h5>
+                    </div>
+                </div>
+                <div class="setting-modal-body px-4">
+                    <div class="setting-item my-4 d-flex justify-content-between">
+                        <div class="d-flex align-items-center">阅读主题</div>
+                        <div class="btn-setting-modal-theme">
+                            <button type="button" class=" btn-theme btn-theme-default" id="default-theme"><span class="theme-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class=" btn-theme btn-theme-ecru" id="ecru-theme"><span class="theme-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class=" btn-theme btn-theme-cyan" id="cyan-theme"><span class="theme-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class=" btn-theme btn-theme-green" id="green-theme"><span class="theme-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class=" btn-theme btn-theme-orange" id="orange-theme"><span class="theme-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class=" btn-theme btn-theme-night" id="night-theme"><span class="theme-checkmark"><i class="fas fa-check"></i></span></button>
+                        </div>
+                    </div>
+                    <!-- 正文字体 -->
+                    <div class="setting-item my-4 d-flex justify-content-between">
+                        <div>正文字体</div>
+                        <div class="btn-setting-modal-font">
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector" data-font="LiSu">隶书</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector" data-font="KaiTi">楷体</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector" data-font="SimSun">宋体</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector" data-font="FangSong">仿宋</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector" data-font="SimHei">黑体</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector" data-font="Microsoft YaHei">微软雅黑</button>
+                        </div>
+                    </div>
+                    <!-- 字体大小设置 -->
+                    <div class="setting-item my-4 d-flex justify-content-between">
+                        <div>字体大小</div>
+                        <div class="btn-setting-modal-font-size">
+                            <!-- 替换原有 radio 按钮组为字体大小调整控件 -->
+                            <div class="d-flex align-items-center gap-2" id="fontSizeControl">
+                                <!-- 左侧减小按钮 -->
+                                <button type="button" class="btn btn-outline-secondary font-selector" id="decreaseFontSize">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
+                                    </svg>
+                                </button>
+                                <!-- 中间显示当前字体大小 -->
+                                <span class="px-4 py-2" style="border-radius: 4px; min-width: 50px; text-align: center;" id="currentFontSize"></span>
+                                <!-- 右侧增大按钮 -->
+                                <button type="button" class="btn btn-outline-secondary font-selector" id="increaseFontSize">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-item my-4 d-flex justify-content-between">
+                        <div class="d-flex align-items-center">字体颜色</div>
+                        <div class="btn-setting-modal-font-color">
+                            <button type="button" class="btn-font-color btn-font-color-whiter" id="whiter-font-color"><span class="font-color-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class="btn-font-color btn-font-color-gray" id="gray-font-color"><span class="font-color-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class="btn-font-color btn-font-color-green" id="green-font-color"><span class="font-color-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class="btn-font-color btn-font-color-blue" id="blue-font-color"><span class="font-color-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class="btn-font-color btn-font-color-orange" id="orange-font-color"><span class="font-color-checkmark"><i class="fas fa-check"></i></span></button>
+                            <button type="button" class="btn-font-color btn-font-color-default" id="default-font-color"><span class="font-color-checkmark"><i class="fas fa-check"></i></span></button>
+                        </div>
+                    </div>
+
+                    <div class="setting-item my-4 d-flex justify-content-between">
+                        <div>行间距</div>
+                        <div class="btn-setting-modal-line-height">
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">80%</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">100%</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">125%</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">150%</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">200%</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">300%</button>
+                        </div>
+                    </div>
+                    <div class="setting-item my-4 d-flex justify-content-between">
+                        <div>页面宽度</div>
+                        <div class="btn-setting-modal-content-width">
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">400</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">600</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">800</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">1000</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">1200</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary font-selector">1400</button>
+                        </div>
+                    </div>
+                    <div class="setting-item my-4 d-flex justify-content-end">
+                        <button id="resetSettings" type="button" class="btn btn-sm btn-outline-secondary">恢复默认样式</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：工具 -->
+    <div class="modal" id="toolsModal" tabindex="-1" aria-labelledby="toolsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable setting-modal-dialog">
+            <div class="modal-content">
+                <div class="setting-modal-header">
+                    <div class="pt-3 mx-3 d-flex justify-content-end">
+                        <button type="button" class="modal-btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="px-3 pb-3">
+                        <h5 class="modal-title" id="settingsModalLabel" style="font-size: x-large;">阅读工具</h5>
+                    </div>
+                </div>
+                <div class="tools-modal-body px-4">
+                    <div class="tools-item my-4 d-flex justify-content-between">
+                        <div class="d-flex align-items-center">翻页模式</div>
+                        <div class="btn-tools-pageMode">
+                            <button type="button" class="btn btn-normal btn-outline-secondary btn-pageMode mx-3 active" id="chapter-pageMode">章节翻页</button>
+                            <button type="button" class="btn btn-normal btn-outline-secondary btn-pageMode mx-3" id="scroll-pageMode">滚动翻页</button>
+                        </div>
+                    </div>
+                    <div class="tools-item my-4 d-flex justify-content-between">
+                        <div class="d-flex align-items-center">页面滚动</div>
+                        <div class="btn-tools-pageDown">
+                            <button class="btn btn-normal btn-outline-secondary auto-scroll-btn mx-1" data-action="toggle">自动滚动</button>
+                            <button class="btn btn-normal btn-outline-secondary speed-btn mx-1" data-speed="slow" onclick="setAutoScrollSpeed(100)">慢</button>
+                            <button class="btn btn-normal btn-outline-secondary speed-btn mx-1 active" data-speed="medium" onclick="setAutoScrollSpeed(70)">中</button>
+                            <button class="btn btn-normal btn-outline-secondary speed-btn mx-1" data-speed="fast" onclick="setAutoScrollSpeed(30)">快</button>
+                            <button class="btn btn-normal btn-outline-secondary speed-btn mx-1" data-speed="diy">自定义</button>
+                        </div>
+                    </div>
+                    <div class="tools-item my-4 d-flex justify-content-between">
+                        <div></div>
+                        <div class="btn-tools-diy-speed d-flex align-items-center">
+                            <input class="diy-speed m-1" type="number" id="custom-scroll-speed" min="1" max="2000" style="width: 10em;" placeholder="输入速度值" value="70">
+                            <button class="btn btn-normal btn-outline-secondary m-1" onclick="setAutoScrollSpeed(parseInt(document.getElementById('custom-scroll-speed').value))">
+                                应用速度
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tools-item my-4 d-flex justify-content-between">
+                        <div class="d-flex align-items-center">朗读模式</div>
+                        <div class="btn-tools-readMode">
+                            <button type="button" class="btn btn-normal btn-outline-secondary btn-readMode mx-3" id="chapter-readMode-male">男声朗读</button>
+                            <button type="button" class="btn btn-normal btn-outline-secondary btn-readMode mx-3" id="scroll-readMode-female">女声朗读</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

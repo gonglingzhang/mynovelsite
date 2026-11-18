@@ -1,0 +1,44 @@
+/* index界面轮播功能 */
+/* 调整淡入淡出动画速度 */
+.carousel-fade .carousel-item {
+    transition: opacity 3s ease-in-out;
+}
+
+.carousel_wapper {
+    height: 500px;
+}
+
+.carouse_inner {
+    height: 500px;
+}
+
+.carouse_inner_item {
+    height: 500px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.carouse_inner_item_container {
+    height: 500px;
+    position: relative;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    max-width: 100vw;
+}
+
+.carouse_inner_item_container_caption {
+    height: 500px;
+    max-width: 100vw;
+    position: static;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.carouse_inner_item_container_caption_img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}

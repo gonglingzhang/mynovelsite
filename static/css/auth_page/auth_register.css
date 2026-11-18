@@ -1,0 +1,125 @@
+.register-main-div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.1rem;
+}
+
+.register-main-label {
+    min-width: 80px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+
+.register-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4F8EF7;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.register-title .register-icon {
+    margin-left: 0.7rem;
+    vertical-align: middle;
+}
+
+.register-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 6px 32px rgba(79, 142, 247, 0.08), 0 1.5px 6px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem 2rem 2rem 2rem;
+    max-width: 500px;
+    margin: 3rem auto 0 auto;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.1rem;
+    display: block;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1.5px solid #d0e2ff;
+    border-radius: 8px;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #4F8EF7;
+    outline: none;
+    background: #f7fbff;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 0.8rem 0;
+    background: linear-gradient(90deg, #4F8EF7 60%, #6FC3FF 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(79, 142, 247, 0.08);
+    transition: background 0.2s;
+}
+
+.register-btn:hover {
+    background: linear-gradient(90deg, #357ae8 60%, #4F8EF7 100%);
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 1.2rem;
+    font-size: 0.98rem;
+}
+
+.login-link a {
+    color: #4F8EF7;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.3rem;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.form-errors {
+    background: #ffeaea;
+    color: #d93025;
+    border-radius: 7px;
+    padding: 0.8rem 1rem;
+    margin-top: 1.2rem;
+    font-size: 0.98rem;
+    box-shadow: 0 1px 4px rgba(217, 48, 37, 0.06);
+}
+
+.captcha-input {
+    /* flex: 1; */
+    margin-right: 6px;
+    padding-right: 6px;
+    width: 180px !important;
+}
+
+.captcha-button {
+    padding: 0.5rem 1rem;
+    background: #4F8EF7;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    width: 180px !important;
+}

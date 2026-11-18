@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ novel.novel_name }}&nbsp;-&nbsp;星群免费小说</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'image/xingqun48.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/content_page/novel_chapter_create.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/wangeditor/default_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/wangeditor/wang_style.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <script src="{% static 'js/wangeditor/default_index.js' %}"></script>
+    <script src="{% static 'js/wangeditor/wang_index_edit_chapter.js' %}"></script>
+    <script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap5/popper.js' %}"></script>
+    <script src="{% static 'bootstrap5/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/word_count.js' %}"></script>
+    <script>
+        const novelChapterEditUrl = "{% url 'novel_content:reverse_novel_chapter_edit' novel.id novel_chapter.id %}";
+        const novel_chapter_content = "{{ novel_chapter_content.content|safe|escapejs }}";
+    </script>
+    <script>
+        function novel_chapter_del_confirmComplete() {
+            // 弹出确认窗口
+            const isConfirmed = confirm('确认要删除该章节吗？');
+            if (isConfirmed) {
+                const novelId = "{{ novel.id }}";
+                const chapterId = "{{ chapter.id }}";
+                const url = "{% url 'novel_content:reverse_novel_chapter_del' novel.id novel_chapter.id %}";
+                const csrfToken = '{{ csrf_token }}';
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    success: function(response) {
+                        // 使用 alert 弹窗显示 JSON 数据中的消息
+                        alert(response.message);
+                        if (response.status === 'success') {
+                            // 可以在这里添加删除成功后的其他操作，比如跳转到列表页
+                            window.location.href =
+                                "{% url 'novel_content:reverse_my_novel_detail' novel.id %}";
+                        }
+                    },
+                    error: function() {
+                        alert('请求出错，请稍后重试');
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+
+<body style="background-color: #EAECEF;">
+    <form action="{% url 'novel_content:reverse_novel_chapter_edit' novel.id novel_chapter.id %}" method="post">
+        {% csrf_token %}
+        <header class="d-flex flex-wrap justify-content-between align-items-center px-4 py-3 mb-4 border-bottom" style="background-color: #ffffff;">
+            <div><a href="{% url 'novel_content:reverse_my_novel_detail' novel.id %}">
+                    <span><i class="fas fa-chevron-left"></i></span>
+                </a>
+            </div>
+            <div class="mx-2">{{ novel.novel_author.username }}的新书 - {{ novel.novel_name }}</div>
+            <div>
+                <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="volume_id">
+                    {% for novel_volume in novel.novel_volume.all %}
+                    {% if novel_volume.id == novel_chapter.novel_volume.id %}
+                    <option value="{{novel_volume.id}}" selected>{{novel_volume.volume_name}}</option>
+                    {% else %}
+                    <option value="{{novel_volume.id}}">{{novel_volume.volume_name}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mx-2"><button type="button" class="btn btn-danger" onclick="novel_chapter_del_confirmComplete()">删除章节</button></div>
+            <div class="d-flex">
+                <div class="mx-2"><button type="submit" class="btn btn-primary" id="submit-btn">保存修改</button></div>
+            </div>
+        </header>
+
+        <div class="container my-5" style="background-color: #ffffff;border-radius: 12px;box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+            <div class="row p-2 pb-0 pe-lg-0 pt-lg-4 align-items-center rounded-3  shadow-lg">
+                <div class="my-3">
+                    <div id="editor—wrapper">
+                        <div id="toolbar-container">
+                            <!-- 工具栏 -->
+                        </div>
+
+                        <div class="d-flex flex-wrap align-items-center mx-2 my-3">
+                            <div class="d-flex fs-3 px-2 mx-2" id="chapterDiv">
+                                <span>第</span>
+                                <span>
+                                    <input type="text" class="custom-input" id="IntInput" name="chapter_name" pattern="[0-9]*" value="{{novel_chapter.chapter_no}}" required>
+                                    <!-- 新增提示信息 div -->
+                                    <div id="numberPrompt" class="fs-6 text-danger" style="display: none;">
+                                        请输入阿拉伯数字
+                                    </div>
+                                </span>
+                                <span>章</span>
+                            </div>
+                            <div class="d-flex fs-3 px-2 mx-2">
+                                <span>
+                                    <input type="text" class="custom-input-title" id="floatingInput" value="{{novel_chapter.chapter_intro}}" name="chapter_intro" maxlength="50" required>
+                                </span>
+                            </div>
+                            <!-- 新增用于显示字数统计的 div -->
+                            <div id="wordCount" class="fs-6 text-muted" style="display: none;">0/50</div>
+                        </div>
+
+                        <div id="editor-container">
+                            <!-- 编辑器 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+/* header main footer中闪烁的星星 */
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 90%;
+    opacity: 1;
+    box-shadow: 0 0 6px 2px #fff;
+    animation: twinkle 6s infinite;
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

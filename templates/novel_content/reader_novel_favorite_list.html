@@ -1,0 +1,379 @@
+{% extends 'extends_index_base.html' %}
+{% block title %}我的书架{% endblock %}
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/index_page/index_on_hover.css' %}">
+<style>
+    :root {
+        --tab-primary: #4f46e5;
+        --tab-primary-light: #eef2ff;
+        --tab-border: #e5e7eb;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* 页面容器 */
+    .bookshelf-container {
+        background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+    }
+
+    /* 标题区 */
+    .bookshelf-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--tab-border);
+    }
+
+    .bookshelf-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .bookshelf-title-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    /* Tab 按钮组 */
+    .filter-tabs {
+        display: flex;
+        background: #f3f4f6;
+        border-radius: 12px;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .filter-tab {
+        padding: 0.625rem 1.5rem;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-tab:hover {
+        color: #374151;
+    }
+
+    .filter-tab.active-btn {
+        background: white;
+        color: var(--tab-primary);
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+    }
+
+    .filter-tab .badge-count {
+        background: #e5e7eb;
+        color: #6b7280;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .filter-tab.active-btn .badge-count {
+        background: var(--tab-primary-light);
+        color: var(--tab-primary);
+    }
+
+    /* 统计信息 */
+    .bookshelf-stats {
+        display: flex;
+        gap: 2rem;
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #9ca3af;
+    }
+
+    /* 书籍卡片网格 */
+    .bookshelf-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .book-card {
+        position: relative;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+    .book-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: #e0e7ff;
+    }
+
+    .book-cover {
+        position: relative;
+        aspect-ratio: 3/4;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    }
+
+    .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .book-card:hover .book-cover img {
+        transform: scale(1.08);
+    }
+
+    .book-status-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(8px);
+    }
+
+    .badge-completed {
+        background: rgba(16, 185, 129, 0.9);
+        color: white;
+    }
+
+    .badge-serializing {
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+    }
+
+    /* 卡片悬停覆盖层 */
+    .book-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 16px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .book-card:hover .book-overlay {
+        opacity: 1;
+    }
+
+    .book-overlay-btn {
+        padding: 8px 20px;
+        background: white;
+        color: #1f2937;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .book-overlay-btn:hover {
+        background: var(--tab-primary);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* 卡片信息区 */
+    .book-info {
+        padding: 14px 16px;
+    }
+
+    .book-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 6px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.2s;
+    }
+
+    .book-card:hover .book-name {
+        color: var(--tab-primary);
+    }
+
+    .book-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.78rem;
+        color: #9ca3af;
+    }
+
+    .book-author {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 70%;
+    }
+
+    /* 空状态 */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: #d1d5db;
+        margin-bottom: 1rem;
+    }
+
+    .empty-text {
+        font-size: 1.1rem;
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-hint {
+        font-size: 0.9rem;
+        color: #9ca3af;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+        .bookshelf-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .bookshelf-grid {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+<script>
+    function filterNovels(status) {
+        window.location.href = `?status=${status}`;
+    }
+</script>
+{% endblock %}
+{% block main %}
+{{ block.super }}
+<div class="container my-5">
+    <div class="bookshelf-container">
+        <!-- 头部：标题 + Tab -->
+        <div class="bookshelf-header">
+            <h1 class="bookshelf-title">
+                <span class="bookshelf-title-icon">📚</span>
+                我的书架
+            </h1>
+            <div class="filter-tabs">
+                <button type="button" class="filter-tab {% if current_status == 'all' %}active-btn{% endif %}" onclick="filterNovels('all')">
+                    全部<span class="badge-count">{{ total_count|default:0 }}</span>
+                </button>
+                <button type="button" class="filter-tab {% if current_status == 'serializing' %}active-btn{% endif %}" onclick="filterNovels('serializing')">
+                    连载中<span class="badge-count">{{ serializing_count|default:0 }}</span>
+                </button>
+                <button type="button" class="filter-tab {% if current_status == 'completed' %}active-btn{% endif %}" onclick="filterNovels('completed')">
+                    已完结<span class="badge-count">{{ completed_count|default:0 }}</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 书籍网格 -->
+        {% if favorite_novels %}
+        <div class="bookshelf-grid">
+            {% for novel in favorite_novels %}
+            <div class="book-card" onclick="window.location.href='{% url 'novel_content:reverse_reader_novel_detail' novel.id %}'">
+                <!-- 封面 -->
+                <div class="book-cover">
+                    {% if novel.novel_home_imgpath %}
+                    <img src="{{ novel.novel_home_imgpath.url }}" alt="{{ novel.novel_name }}" title="{{ novel.novel_name }}">
+                    {% else %}
+                    <img src="{% static 'image/暂无封面.jpg' %}" alt="{{ novel.novel_name }}" title="{{ novel.novel_name }}">
+                    {% endif %}
+                    <!-- 状态徽章 -->
+                    <span class="book-status-badge {% if novel.novel_status == 1 %}badge-completed{% else %}badge-serializing{% endif %}">
+                        {% if novel.novel_status == 1 %}完结{% else %}连载{% endif %}
+                    </span>
+                    <!-- 悬停遮罩 -->
+                    <div class="book-overlay">
+                        <a href="{% url 'novel_content:reverse_reader_novel_detail' novel.id %}" class="book-overlay-btn">立即阅读</a>
+                    </div>
+                </div>
+                <!-- 信息 -->
+                <div class="book-info">
+                    <h3 class="book-name">{{ novel.novel_name }}</h3>
+                    <div class="book-meta">
+                        <span class="book-author">{{ novel.novel_author }}</span>
+                        {% if novel.novel_status == 1 %}
+                        <span style="color: #10b981;">完结</span>
+                        {% else %}
+                        <span style="color: #3b82f6;">连载中</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- 空状态 -->
+        <div class="empty-state">
+            <div class="empty-icon">📖</div>
+            <div class="empty-text">您的书架暂时为空</div>
+            <div class="empty-hint">快去发现好书，添加到书架吧~</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

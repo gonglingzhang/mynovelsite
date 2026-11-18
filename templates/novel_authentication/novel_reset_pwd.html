@@ -1,0 +1,54 @@
+{% extends 'extends_index_base.html' %}
+
+{% block title %} 重置密码 {% endblock %}
+
+{% block head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/auth_page/auth_register.css' %}">
+<script src="{% static 'js/register.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+{{ block.super }}
+<div class="register-container">
+    <h2 class="register-title">
+        <span>重置密码</span>
+    </h2>
+    <form method="post" action="{% url 'novel_auth:reverse_novel_reset_pwd' %}">
+        {% csrf_token %}
+        <div class="form-group register-main-div">
+            <label for="email" class="pb-3 pt-2 register-main-label text-center">邮箱</label>
+            <input type="email" id="email" name="email" required placeholder="请输入邮箱">
+        </div>
+        <div class="form-group register-main-div">
+            <label for="new_password" class="pb-3 pt-2 register-main-label text-center">新密码</label>
+            <input type="password" id="new_password" name="new_password" required placeholder="请输入新密码">
+        </div>
+        <div class="form-group register-main-div">
+            <label for="new_password_confirm" class="pb-3 pt-2 register-main-label text-center">确认新密码</label>
+            <input type="password" id="new_password_confirm" name="new_password_confirm" required placeholder="请再次输入新密码">
+        </div>
+        <div class="form-group register-main-div">
+            <label for="verification_code" class="pb-3 pt-2 register-main-label text-center">验证码</label>
+            <input type="text" id="verification_code" name="verification_code" class="captcha-input" required placeholder="请输入验证码">
+            <button type="button" id="captcha-btn" class="mb-3 register-main-label captcha-button" style="width: 180px;">获取验证码</button>
+        </div>
+        <button type="submit" class="register-btn">更改密码</button>
+    </form>
+
+    {% if form.errors %}
+    <div class="form-errors">
+        <ul>
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
