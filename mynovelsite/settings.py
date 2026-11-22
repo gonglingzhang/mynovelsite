@@ -23,8 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-$btz7jqibsruqlm-@&bd#smoqz=1vzdi#8l))((4all$%2#$#-'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -172,3 +170,8 @@ handler404 = 'mynovelsite.views.error_404'
 # 单位为字节，设置为 4000MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 4000 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4000 * 1024 * 1024
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True  # 本地测试使用True，生产环境请改为False，并在ALLOWED_HOSTS中添加域名或IP地址
+DEBUG = False  # 本地测试使用True，生产环境请改为False，并在ALLOWED_HOSTS中添加域名或IP地址

@@ -62,6 +62,10 @@ class NovelRegisterForm(forms.Form):
         },
     )
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
     # 这里clean_后面的命名要和上面的字段保持一致。且是按照顺序执行的,比如要对比password1和password2是否一致的时候，如果设置为clean_password1，那么就获取不到password2的数据，因为还没有执行到。
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -85,13 +89,12 @@ class NovelRegisterForm(forms.Form):
         return confirm_password
 
     def clean_verification_code(self):
-        captcha = self.cleaned_data.get('verification_code')
-        email = self.cleaned_data.get('email')
-        captcha_model = NovelCaptchaModel.objects.filter(
-            email=email, captcha=captcha).first()
-        if not captcha_model:
-            raise forms.ValidationError('验证码错误或已过期，请重新获取验证码。')
-        captcha_model.delete()  # 删除已使用的验证码
+        captcha = self.cleaned_data.get('verification_code', '').upper()
+        session_captcha = self.request.session.get('image_captcha', '') if self.request else ''
+        if not session_captcha or captcha != session_captcha:
+            raise forms.ValidationError('验证码错误，请重新输入。')
+        # 使用后清除
+        del self.request.session['image_captcha']
         return captcha
 
 
@@ -138,6 +141,10 @@ class NovelResetPWDForm(forms.Form):
         },
     )
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
     # 这里clean_后面的命名要和上面的字段保持一致。且是按照顺序执行的,比如要对比password1和password2是否一致的时候，如果设置为clean_password1，那么就获取不到password2的数据，因为还没有执行到。
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -155,13 +162,12 @@ class NovelResetPWDForm(forms.Form):
         return confirm_password
 
     def clean_verification_code(self):
-        captcha = self.cleaned_data.get('verification_code')
-        email = self.cleaned_data.get('email')
-        captcha_model = NovelCaptchaModel.objects.filter(
-            email=email, captcha=captcha).first()
-        if not captcha_model:
-            raise forms.ValidationError('验证码错误或已过期，请重新获取验证码。')
-        captcha_model.delete()  # 删除已使用的验证码
+        captcha = self.cleaned_data.get('verification_code', '').upper()
+        session_captcha = self.request.session.get('image_captcha', '') if self.request else ''
+        if not session_captcha or captcha != session_captcha:
+            raise forms.ValidationError('验证码错误，请重新输入。')
+        # 使用后清除
+        del self.request.session['image_captcha']
         return captcha
 
 
