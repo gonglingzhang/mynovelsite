@@ -1,3 +1,7 @@
+# 网站名称：星群小说网站管理系统V1.0
+# 版本号：V1.0
+# 著作权人：公令璋
+# 开发完成日期：2026年11月18日
 from django.shortcuts import render
 from django.db.models import Count
 from django.utils import timezone

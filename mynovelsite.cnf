@@ -7,3 +7,5 @@ default-character-set = utf8mb4
 [mysqld]
 character-set-server = utf8mb4
 collation-server = utf8mb4_unicode_ci
+
+# mysql数据库参数，修改成sqlite数据库了，暂时不用了。

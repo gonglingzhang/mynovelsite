@@ -163,7 +163,9 @@ body.modal-open[style] {
 }
 
 .chapter-info {
-    font-size: xx-large;
+    /* 让标题也跟随字号和行高设置，但保持相对大的显示比例 */
+    font-size: calc(var(--content-font-size-style) * 1.5);
+    line-height: var(--content-line-height-style);
     margin: 0.8em;
     font-family: var(--content-font-family-style);
 }
@@ -172,8 +174,10 @@ body.modal-open[style] {
     color: var(--chapter-text-info-color) !important;
     margin: 1em;
     transition: background-color 0s ease-in-out !important;
-    /* 使用rem单位确保相对于根字体大小缩放 */
-    font-size: 0.9rem !important;
+    /* 让信息栏也跟随字体和字号设置 */
+    font-family: var(--content-font-family-style);
+    font-size: calc(var(--content-font-size-style) * 0.75) !important;
+    line-height: var(--content-line-height-style);
 }
 
 .chapter-text-info a {
@@ -193,7 +197,8 @@ body.modal-open[style] {
     /* 当内容超出容器时显示滚动条 */
 }
 
-/* 强制覆盖 chapter-content 内所有子元素的颜色，确保字体颜色设置生效 */
+/* 强制覆盖 chapter-content 内所有子元素的样式，确保颜色/字体/字号/行高设置全生效
+   注意：不能把 .chapter-content 自己选进来！它用 CSS 变量控制，子元素才应该 inherit */
 .read-container .chapter-content *,
 .read-container .chapter-content p,
 .read-container .chapter-content span,
@@ -206,8 +211,14 @@ body.modal-open[style] {
 .read-container .chapter-content h6,
 .read-container .chapter-content li,
 .read-container .chapter-content blockquote,
-.read-container .chapter-content a {
+.read-container .chapter-content a,
+.read-container .chapter-content strong,
+.read-container .chapter-content em,
+.read-container .chapter-content u {
     color: inherit !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
 }
 
 /* 限制图片最大宽度和高度 */

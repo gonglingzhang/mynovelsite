@@ -81,16 +81,24 @@ WSGI_APPLICATION = 'mynovelsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# mysql数据库配置
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'OPTIONS': {
+#             'read_default_file': os.path.join(BASE_DIR, 'mynovelsite.cnf'),
+#             'charset': 'utf8mb4',  # 添加字符集设置
+#         }
+#     }
+# }
+
+# sqlite数据库配置
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, 'mynovelsite.cnf'),
-            'charset': 'utf8mb4',  # 添加字符集设置
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -140,11 +148,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 邮箱配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True  # 使用TLS加密
-EMAIL_HOST = 'smtp.qq.com'  # 使用QQ邮箱
-EMAIL_PORT = 587  # SMTP端口
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 465                  # SSL 端口
+EMAIL_USE_SSL = True              # 用 SSL（更稳定）
+EMAIL_USE_TLS = False             # 关掉 TLS，不能和 SSL 同时开
 EMAIL_HOST_USER = '359490457@qq.com'
-EMAIL_HOST_PASSWORD = 'tonkyivlgusocajh'  # 这里填写你的QQ邮箱授权码，而不是密码
+EMAIL_HOST_PASSWORD = 'jowuvvnquuwncbda'  # 这里是授权码，不是邮箱密码
 DEFAULT_FROM_EMAIL = '359490457@qq.com'
 
 LOGIN_URL = '/auth/login'  # 登录页面的URL名称 @login_required用户未登录时，系统应该跳转到哪个登录页面。

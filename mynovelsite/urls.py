@@ -19,6 +19,13 @@ from django.urls import include, path
 from django.http import HttpResponse
 from . import settings, views
 from django.conf.urls.static import static
+from django.contrib import admin
+
+
+admin.site.site_header = "星群小说网站管理系统"       # 页面顶部的大字（最主要！截图看到的）
+admin.site.site_title = "星群小说网站管理系统"    # 浏览器标签标题
+admin.site.index_title = "星群小说网站管理系统"   # 后台首页下面的标题
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
