@@ -26,6 +26,9 @@ class NovelCategoryModel(models.Model):
         verbose_name = '小说分类'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.category_name
+
 
 # 小说标签字典
 class NovelLabelModel(models.Model):
@@ -35,6 +38,9 @@ class NovelLabelModel(models.Model):
     class Meta:
         verbose_name = '小说标签'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.label_name
 
 
 # 小说基本信息表

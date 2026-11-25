@@ -25,6 +25,10 @@ class NovelUserModel(AbstractUser):
                               null=True, verbose_name='拓展字段2', db_comment='拓展字段2')
     REQUIRED_FIELDS = ['email']
 
+    class Meta:
+        verbose_name = '小说用户'
+        verbose_name_plural = verbose_name
+
 
 class NovelCaptchaModel(models.Model):
     email = models.EmailField(
@@ -33,3 +37,7 @@ class NovelCaptchaModel(models.Model):
         max_length=4, verbose_name="验证码", db_comment="验证码")
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = '小说验证码'
+        verbose_name_plural = verbose_name

@@ -35,11 +35,14 @@ def novel_create(request):
             novel_label = request.POST.getlist("novel_label")
             novel_intro = request.POST.get("novel_intro")
             # 这里可以添加保存数据到数据库的逻辑
+            # 根据用户身份自动设置小说公开状态：管理员=公开，普通用户=非公开
+            is_public = request.user.is_staff or request.user.is_superuser
             novel_basicinfo = NovelBasicInfoModel.objects.create(
                 novel_name=novel_name,
                 novel_author=request.user,
                 novel_reader_gender=novel_reader_gender,
                 novel_intro=novel_intro,
+                novel_public=is_public,
             )
             novel_basicinfo.novel_category.set(novel_category)
             novel_basicinfo.novel_label.set(novel_label)
@@ -416,10 +419,18 @@ def novel_chapter_edit(request, novel_id, chapter_id):
 def reader_novel_detail(request, novel_id):
     user = request.user
     novel = get_object_or_404(NovelBasicInfoModel, id=novel_id)
+
+    # 权限校验：非公开小说只有作者本人或管理员能看
+    if not novel.novel_public:
+        is_author = request.user.is_authenticated and novel.novel_author == request.user
+        is_admin = request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
+        if not (is_author or is_admin):
+            messages.warning(request, f'《{novel.novel_name}》为非公开作品，仅作者可见。')
+            return redirect('/')
+
     novel_chapter = NovelChapterModel.objects.filter(novel_basicinfo=novel)
     first_chapter = NovelChapterModel.objects.filter(novel_basicinfo=novel).order_by('chapter_update_time').first()
     latest_chapter = NovelChapterModel.objects.filter(novel_basicinfo=novel).order_by('-chapter_update_time').first()
-    print("user", user)
     if request.user.is_authenticated:
         is_like = NovelLikeModel.objects.filter(user=user, novel=novel).exists()
         is_favorited = NovelFavoriteModel.objects.filter(user=user, novel=novel).exists()
@@ -478,6 +489,14 @@ def novel_book_favorite(request, novel_id):
 @require_http_methods(["GET"])
 def reader_novel_chapter_detail(request, novel_id, volume_id, chapter_id):
     novel = get_object_or_404(NovelBasicInfoModel, id=novel_id)
+
+    # 权限校验：非公开小说的章节只有作者本人或管理员能看
+    if not novel.novel_public:
+        is_author = request.user.is_authenticated and novel.novel_author == request.user
+        is_admin = request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
+        if not (is_author or is_admin):
+            messages.warning(request, f'《{novel.novel_name}》为非公开作品，仅作者可见。')
+            return redirect('/')
     novel_chapter = get_object_or_404(NovelChapterModel, id=chapter_id)
     novel_chapter_content = get_object_or_404(NovelContentModel, novel_basicinfo=novel, chapter_basicinfo=novel_chapter)
     first_chapter = NovelChapterModel.objects.filter(novel_basicinfo=novel, novel_volume=volume_id).order_by('chapter_no').first()
@@ -556,8 +575,13 @@ def reader_novel_category(request):
     keyword = request.GET.get('keyword', '').strip()   # 搜索关键词
     page = request.GET.get('page', '1')
 
-    # ============ 2. 获取字典数据（分类、标签 + 小说数量）===========
-    base_for_count = NovelBasicInfoModel.objects.filter(novel_public=1)
+    # ============ 2. 构建可见性过滤：公开小说 ∪ 当前用户自己的小说 ============
+    visible_filter = Q(novel_public=1)
+    if request.user.is_authenticated:
+        visible_filter = visible_filter | Q(novel_author=request.user)
+
+    # 获取字典数据（分类、标签 + 小说数量）
+    base_for_count = NovelBasicInfoModel.objects.filter(visible_filter)
     # 用 ManyToMany 反向统计每个分类/标签下的公开小说数
     categories = NovelCategoryModel.objects.filter(
         category_status=1
@@ -578,8 +602,8 @@ def reader_novel_category(request):
     ).order_by('-novel_count')
 
     # ============ 3. 构建查询集 ============
-    # 基础：只显示公开的小说
-    queryset = NovelBasicInfoModel.objects.filter(novel_public=1)
+    # 基础：只显示用户可见的小说（公开 ∪ 自己写的）
+    queryset = NovelBasicInfoModel.objects.filter(visible_filter)
 
     # 3.1 关键词搜索（搜索小说名称和作者）
     if keyword:
